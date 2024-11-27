@@ -34,13 +34,13 @@
 
 # ✨ 快速开始
 
-## Docker部署
-
-### 前端部署
-
-### 后端部署
 
 
+  <a href="deploy.md">部署体验</a>
+  
+demo地址：<a href="https://open-ipaas.wakedata.com">https://open-ipaas.wakedata.com</a>
+
+默认账密： wakedata/TE&YHFWAT134
 
 
 # 🔥 特性
@@ -133,6 +133,9 @@
 
 - 网站: https://wakedata.com/wake-integrated.html
 - 电子邮件: x@wakedata.com
+- 企业微信
+![image](./image/wechat.png)
+
 
 <br>
 
