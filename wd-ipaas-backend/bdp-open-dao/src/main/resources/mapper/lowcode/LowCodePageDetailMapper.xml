@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.lowcode.mapper.LowCodePageDetailMapper">
+
+  <select id="listByBatch" resultType="com.wakedata.dw.lowcode.model.LowCodePageSimplePo">
+    SELECT
+        ps.id,
+        ps.app_id AS appId,
+        ps.category_id AS categoryId,
+        ps.name,
+        ps.title,
+        ps.params,
+        ps.cover,
+        ps.create_time AS createTime,
+        ps.update_time AS updateTime,
+        ps.update_by AS updateBy,
+        IFNULL(pd.compressed_content, pd.content) AS content
+    FROM dw_open_lowcode_page_simple ps, dw_open_lowcode_page_detail pd
+    WHERE ps.app_id = #{appId}
+      AND ps.name IN
+      <foreach collection="names" item="name" index="index" open="(" close=")" separator=",">
+          #{name}
+      </foreach>
+      AND pd.simple_id = ps.id
+  </select>
+</mapper>

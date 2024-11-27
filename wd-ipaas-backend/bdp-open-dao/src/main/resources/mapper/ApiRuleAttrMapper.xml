@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.attr.ApiRuleAttrMapper">
+    <resultMap id="ApiRuleAttr" type="com.wakedata.dw.open.model.api.rule.ApiRuleAttr">
+        <id column="id" property="id"/>
+        <result column="api_id" property="apiId"/>
+        <result column="name" property="ruleName"/>
+        <result column="next_api_id" property="toApiId"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="rule_expression" property="ruleExpression"/>
+        <result column="from_operator_id" property="fromOperatorId"/>
+        <result column="to_operator_id" property="toOperatorId"/>
+    </resultMap>
+
+    <sql id="COLUMNS">
+        api_id,name,next_api_id,lessee_id,create_by,update_by,
+        rule_expression,from_operator_id,to_operator_id
+    </sql>
+
+    <insert id="insertRule"  useGeneratedKeys="true" keyProperty="attr.id">
+        INSERT INTO dw_open_api_cond_rule (<include refid="COLUMNS"></include>)
+        VALUES (#{attr.apiId},  #{attr.ruleName}, #{attr.toApiId}, #{attr.lesseeId},
+                #{attr.createBy}, #{attr.updateBy}, #{attr.ruleExpression}, #{attr.fromOperatorId}, #{attr.toOperatorId})
+    </insert>
+</mapper>

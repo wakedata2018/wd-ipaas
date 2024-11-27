@@ -1,0 +1,27 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      server-addr: ${NACOS_CONFIG_SERVER:127.0.0.1:8848}
+      username:
+      password:
+      discovery:
+        namespace: ${NACOS_CONFIG_NAMESPACE:wdcloud}
+      config:
+        namespace: ${NACOS_CONFIG_NAMESPACE:wdcloud}
+        enabled: true
+        refresh-enabled: true
+        group: DEFAULT_GROUP
+        file-extension: yml
+        #用于共享的配置文件
+        shared-configs:
+          - data-id: common-redis.yml
+          - data-id: common.yml
+          - data-id: common-mysql.yml
+          - data-id: common-storage-tencent.yml
+          - data-id: common-storage-aliyun.yml
+          - data-id: common-storage-huawei.yml
+          - data-id: xxl-job.yml
+sys:
+  env: dev

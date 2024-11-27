@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.ApiWarnMapper">
+    <select id="findByApiId" resultType="com.wakedata.dw.open.model.warn.ApiWarnPo">
+        select  ID AS id,
+                WARN_NAME AS name,
+                WARN_DESC AS warnDesc,
+                RULE_SECOND AS ruleSecond,
+                RULE_ERROR_TIMES AS ruleErrorTimes,
+                STATUS AS status,
+                EMAIL AS email,
+                PHONE AS phone,
+                data_asset_api_id AS apiId
+        from  DW_OPEN_API_WARN
+        where  data_asset_api_id = #{dataAssetApiId}
+    </select>
+    <sql id="queryCondition">
+        <if test="apiWarnQueryDo.warnName != null">
+            AND
+            w.WARN_NAME LIKE CONCAT('%',#{apiWarnQueryDo.warnName},'%')
+        </if>
+        <if test="apiWarnQueryDo.apiGroup != null">
+            AND
+            g.ID = #{apiWarnQueryDo.apiGroup}
+        </if>
+        <if test="apiWarnQueryDo.apiName != null ">
+            AND
+            a.API_NAME LIKE CONCAT('%',#{apiWarnQueryDo.apiName},'%')
+        </if>
+        <if test="apiWarnQueryDo.email != null">
+            AND
+            w.EMAIL LIKE CONCAT('%',#{apiWarnQueryDo.email},'%')
+        </if>
+
+        <if test="apiWarnQueryDo.phone != null">
+            AND
+            w.PHONE LIKE CONCAT('%',#{apiWarnQueryDo.phone},'%')
+        </if>
+        <if test="apiWarnQueryDo.status != null">
+            AND
+            w.STATUS = #{apiWarnQueryDo.status}
+        </if>
+    </sql>
+
+    <select id="queryWarnByCondition" resultType="com.wakedata.dw.open.model.domain.ApiWarnDo">
+        SELECT
+            w.ID AS apiWarnId,
+            w.WARN_NAME AS apiWarnName,
+            g.GROUP_NAME AS apiGroup,
+            a.API_NAME AS apiName,
+            a.DATA_ASSET_API_METHOD AS apiMethod,
+            w.`STATUS` AS STATUS,
+            w.EMAIL AS email,
+            w.PHONE AS phone,
+            w.RULE_SECOND AS ruleSecond,
+            w.RULE_ERROR_TIMES AS ruleErrorTimes,
+            g.ID AS apiGroupId,
+            a.DATA_ASSET_API_ID AS apiId,
+            w.WARN_DESC as warnDesc
+        FROM
+            DW_OPEN_API_WARN w
+            INNER JOIN DW_OPEN_API a ON w.data_asset_api_id = a.DATA_ASSET_API_ID
+            INNER JOIN DW_OPEN_API_GROUP g ON a.API_GROUP_ID = g.ID
+        WHERE g.LESSEE_ID = #{apiWarnQueryDo.lesseeId}
+        <include refid="queryCondition"></include>
+        ORDER BY w.CREATE_TIME desc
+    </select>
+
+    <select id="findApiByGroup" resultType="com.wakedata.dw.open.model.domain.ApiInfoDo">
+        SELECT DATA_ASSET_API_ID AS apiId,API_NAME AS apiName FROM DW_OPEN_API WHERE API_GROUP_ID = #{apiGroupId};
+    </select>
+
+</mapper>

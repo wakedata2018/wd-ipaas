@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bdp-open</artifactId>
+        <groupId>com.wakedata.dw</groupId>
+        <version>V2.1.6-S26-RC04-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bdp-open-stub</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.wakedata.dw</groupId>
+            <artifactId>bdp-open-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- 后期重构-->
+       <dependency>
+            <groupId>com.wakedata.dw</groupId>
+            <artifactId>bdp-open-dao</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wakedata.wd.app</groupId>
+            <artifactId>wd-app-client</artifactId>
+        </dependency>
+    </dependencies>
+</project>

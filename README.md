@@ -1,4 +1,4 @@
-![image](/image/产品介绍.png)
+![image](./image/产品介绍.png)
 
 <p align="center">
   <a href="/README.md">English</a>
@@ -16,9 +16,9 @@
 
 ✨ 通过标准化、可视化提升集成效率50%
 
-![image](/image/API功能.png)
+![image](./image/API功能.png)
 
-![image](/image/业务编排.png)
+![image](./image/业务编排.png)
 
 
 

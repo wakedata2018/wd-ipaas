@@ -1,0 +1,65 @@
+package com.wakedata.openapi.sdk.api.${api.groupPackage}.${api.apiPackage};
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.*;
+/**
+ * ${api.desc}
+ * api响应body参数
+ * @author luomeng
+ * @date ${dateTime}
+ */
+@Data
+@NoArgsConstructor
+public class ${api.className}ResponseBody implements Serializable {
+    #foreach($field in $api.respBodyList)
+    #if(${field.itemClassName})
+
+        /**
+         * ${field.desc}
+         */
+        private ${field.type.replace("Object",${field.itemClassName})} ${field.name};
+    #else
+
+        /**
+         * ${field.desc}
+         */
+        private ${field.type} ${field.name};
+    #end
+    #end
+    #foreach($field in $api.respBodyList)
+    #if(${field.itemClassName})
+
+        /**
+        * ${field.desc}
+        */
+        @Data
+        @NoArgsConstructor
+        public static class ${field.itemClassName} implements Serializable{
+        #foreach($item in ${field.itemFieldList})
+        #if(${item.type.indexOf("Object")} != -1)
+
+            /**
+             * ${item.desc}
+             * ${item.itemFieldList}
+             * ApiField中name为对应的参数名称
+             */
+            private ${item.type.replace("Object","Map<String,Object>")} ${item.name};
+        #else
+
+            /**
+             * ${item.desc}
+             */
+            private ${item.type} ${item.name};
+        #end
+        #end
+
+        }
+
+    #end
+    #end
+
+
+}

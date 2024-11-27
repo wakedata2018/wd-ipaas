@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.AppApprovalMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.api.AppApprovalPo">
+        <id column="approval_id" property="approvalId"/>
+        <result column="user_identification" property="userIdentification"/>
+        <result column="approval_subject" property="approvalSubject"/>
+        <result column="approval_business_type" property="approvalBusinessType"/>
+        <result column="approval_body" property="approvalBody"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="approval_message" property="approvalMessage"/>
+        <result column="data_asset_api_id" property="dataAssetId"/>
+        <result column="data_access_app_id" property="accessAppId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="form_url" property="formUrl"/>
+        <result column="lessee_id" property="lesseeId"/>
+    </resultMap>
+
+    <select id="selectApprovalInfo" resultType="com.wakedata.dw.open.model.domain.DataAccessApprovalDo">
+        SELECT
+            a.APPROVAL_ID AS approvalId,
+            b.DATA_ACCESS_APP_NAME AS accessAppName,
+            a.USER_IDENTIFICATION AS approvalInCharge,
+            a.CREATE_TIME AS approvalTime
+        FROM
+            DW_OPEN_APPROVAL a
+            INNER JOIN DW_OPEN_APP_ACCESS b ON a.data_access_app_id = b.DATA_ACCESS_APP_ID
+        WHERE
+            a.data_asset_api_id = #{dataAssetId}
+    </select>
+
+    <select id="queryCollect" resultType="java.util.Map">
+        SELECT DATA_ASSET_API_ID AS dataAssetId, DATA_ACCESS_APP_ID AS accessAppId
+        FROM DW_OPEN_COLLECT WHERE USERNAME = #{userIdentification} AND DATA_ASSET_API_ID in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectPageApproveInfo" resultMap="BaseResultMap">
+        SELECT a.* FROM dw_open_approval a
+        INNER JOIN dw_open_api i ON a.data_asset_api_id = i.data_asset_api_id
+        LEFT JOIN dw_open_lessee l ON a.lessee_id = l.id
+        <where>
+            <if test="appApprovalPo.lesseeId != null">
+                AND a.lessee_id = #{appApprovalPo.lesseeId}
+            </if>
+            <if test="appApprovalPo.dataAssetId != null">
+                AND a.data_asset_api_id = #{appApprovalPo.dataAssetId}
+            </if>
+            <if test="appApprovalPo.accessAppId != null">
+                AND a.data_access_app_id = #{appApprovalPo.accessAppId}
+            </if>
+            <if test="appApprovalPo.approvalBusinessType != null">
+                AND a.approval_business_type = #{appApprovalPo.approvalBusinessType}
+            </if>
+            <if test="appApprovalPo.approvalStatus != null">
+                AND a.approval_status = #{appApprovalPo.approvalStatus}
+            </if>
+            <if test="appApprovalPo.userIdentification != null">
+                AND a.user_identification = #{appApprovalPo.userIdentification}
+            </if>
+            <if test="keyword != null">
+                AND i.api_name like concat('%',#{keyword},'%')
+            </if>
+            <if test="lesseeName != null">
+                AND l.name like concat('%',#{lesseeName},'%')
+            </if>
+        </where>
+        ORDER BY a.CREATE_TIME DESC
+    </select>
+
+    <select id="selectApproveInfoId" resultType="java.lang.String">
+        SELECT a.APPROVAL_ID
+        FROM DW_OPEN_APPROVAL a
+        WHERE data_asset_api_id = #{apiId}
+        AND data_access_app_id = #{appId}
+        AND (APPROVAL_STATUS != 3)
+        AND LESSEE_ID = #{lesseeId}
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select * from dw_open_approval where approval_id = #{approvalId}
+    </select>
+
+    <sql id="auth_list_base_condition">
+        <where>
+            <if test="query.dataAssetPublishStatus != null">
+                and doa.data_asset_publish_status = #{query.dataAssetPublishStatus}
+            </if>
+            <if test="query.lesseeId != null">
+                and doap.lessee_id = #{query.lesseeId}
+            </if>
+            <if test="query.approvalBusinessType != null">
+                and doap.approval_business_type = #{query.approvalBusinessType}
+            </if>
+            <if test="query.approvalStatus != null">
+                and doap.approval_status = #{query.approvalStatus}
+            </if>
+            <if test="query.appId != null">
+                and doap.data_access_app_id = #{query.appId}
+            </if>
+            <if test="query.appAuthStatus != null">
+                and doap.app_auth_status = #{query.appAuthStatus}
+            </if>
+            <if test="query.apiId != null">
+                and doap.data_asset_api_id = #{query.apiId}
+            </if>
+            <if test="query.activeStatus != null">
+                and doap.active_status = #{query.activeStatus}
+            </if>
+            <if test="query.secret != null">
+                and doa.secret = #{query.secret}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectAuthApiVOList" resultType="com.wakedata.dw.open.model.api.AuthApiVO">
+        select
+            doap.approval_id as approvalId,
+            doa.api_name as dataAssetName,
+            doa.api_description as dataAssetDescription,
+            doa.api_group_id as apiGroupId,
+            ifnull(doap.app_auth_status,0) as appAuthStatus,
+            doap.data_access_app_id as dataAccessAppId,
+            doag.group_name as apiGroupName,
+            doa.data_asset_api_id as dataAssetApiId,
+            doap.lessee_id as lesseeId,
+            doap.approval_business_type as approvalBusinessType,
+            doap.approval_status as approvalStatus,
+            doap.active_status as activeStatus
+        from
+            dw_open_api doa
+        inner join dw_open_api_group doag on doag.id = doa.api_group_id
+        inner join dw_open_approval doap on doa.data_asset_api_id = doap.data_asset_api_id
+        <include refid="auth_list_base_condition"></include>
+
+        union all
+
+        SELECT NULL AS approvalId,
+        api.api_name AS dataAssetName,
+        api.api_description AS dataAssetDescription,
+        api.api_group_id AS apiGroupId,
+        0 AS appAuthStatus,
+        NULL AS dataAccessAppId,
+        ag.group_name AS apiGroupName,
+        api.data_asset_api_id AS dataAssetApiId,
+        api.lessee_id AS lesseeId,
+        NULL AS approvalBusinessType,
+        NULL AS approvalStatus,
+        NULL AS activeStatus
+        FROM dw_open_api api
+        LEFT JOIN dw_open_api_group ag ON api.api_group_id = ag.id
+        WHERE api.lessee_id = #{query.lesseeId}
+            AND api.data_asset_publish_status = #{query.dataAssetPublishStatus}
+            AND api.secret = #{query.secret}
+
+        order by approvalId desc,apiGroupId desc,dataAssetApiId desc
+    </select>
+
+    <select id="selectAuthCount" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            dw_open_api doa
+        inner join dw_open_api_group doag on doag.id = doa.api_group_id
+        inner join dw_open_approval doap on doa.data_asset_api_id = doap.data_asset_api_id
+        <include refid="auth_list_base_condition"></include>
+        order by doap.approval_id desc
+    </select>
+
+
+    <select id="selectLesseeApiCount" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT(api.data_asset_api_id)) FROM dw_open_api api
+         LEFT JOIN dw_open_approval doap ON api.data_asset_api_id = doap.data_asset_api_id
+            AND api.lessee_id = doap.lessee_id
+        WHERE api.lessee_id = #{query.lesseeId}
+          AND api.secret = #{query.secret}
+          AND api.data_asset_publish_status = #{query.dataAssetPublishStatus}
+          <choose>
+              <when test="query.appAuthStatus != null">
+                  AND doap.approval_business_type = #{query.approvalBusinessType}
+                  AND doap.data_access_app_id = #{query.appId}
+                  AND doap.app_auth_status = #{query.appAuthStatus}
+              </when>
+          </choose>
+          <if test="query.apiId != null">
+              AND doap.data_asset_api_id = #{query.apiId}
+          </if>
+    </select>
+
+    <select id="selectAuthCountGroupByAppId" resultType="com.wakedata.dw.open.model.api.AppIdAndAuthApiCountVo">
+        select
+            data_access_app_id as appId,
+            count(*) as authApiCount
+        from
+        dw_open_api doa
+        inner join dw_open_api_group doag on doag.id = doa.api_group_id
+        inner join dw_open_approval doap on doa.data_asset_api_id = doap.data_asset_api_id
+        <include refid="auth_list_base_condition"></include>
+        group by doap.data_access_app_id
+    </select>
+
+    <update id="disableApprovalRecord">
+        update dw_open_approval
+            set active_status = 0
+        <where>
+            <if test="lesseeId != null">
+                and lessee_id = #{lesseeId}
+            </if>
+            <if test="appId != null">
+                and data_access_app_id = #{appId}
+            </if>
+            <if test="apiId != null">
+                and data_asset_api_id = #{apiId}
+            </if>
+        </where>
+    </update>
+    <update id="updateActiveStatusById">
+        UPDATE dw_open_approval
+        SET active_status = #{appApprovalPo.activeStatus} ,UPDATE_TIME=NOW()
+        WHERE data_asset_api_id = #{appApprovalPo.dataAssetId}
+    </update>
+    <update id="batchUpdateActiveStatusById"  parameterType="java.util.List">
+        UPDATE dw_open_approval
+        SET active_status = #{activeStatus} ,UPDATE_TIME=NOW()
+        WHERE data_asset_api_id in
+        <foreach collection="dataAssetApiIds" index="index" item="dataAssetApiId" separator="," open="(" close=")">
+            #{dataAssetApiId}
+        </foreach>
+    </update>
+
+
+    <select id="findLastApiApproveByLesseeId" resultMap="BaseResultMap">
+        select * from dw_open_approval
+        where approval_business_type = #{appApprovalPo.approvalBusinessType}
+          and data_asset_api_id = #{appApprovalPo.dataAssetId}
+          and lessee_id = #{appApprovalPo.lesseeId}
+          and active_status = #{appApprovalPo.activeStatus}
+        order by create_time desc limit 1
+    </select>
+
+</mapper>

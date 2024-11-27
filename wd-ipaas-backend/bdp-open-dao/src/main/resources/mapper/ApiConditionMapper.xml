@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.ApiConditionMapper">
+
+    <select id="getAssetColumns" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT ASSET_COLUMNS FROM DW_OPEN_API_CONDITION WHERE data_asset_api_id=#{dataAssetId}
+    </select>
+
+  <select id="listByDataAssetId" resultType="com.wakedata.dw.open.model.api.ApiConditionPo">
+    SELECT ac.data_asset_api_id AS dataAssetId, ac.ASSET_COLUMNS AS assetColumns
+    FROM DW_OPEN_API_CONDITION ac
+           LEFT JOIN (SELECT ar.DATA_ASSET_FIELD_NAME
+                      FROM DW_OPEN_APP_ACCESS_RULE ar
+                      WHERE ar.DATA_ACCESS_APP_ID = #{dataAccessAppId}
+                        AND ar.DATA_ASSET_API_ID IN
+                        <foreach collection="dataAssetIds" item="dataAssetId" index="index" open="(" close=")" separator=",">
+                            #{dataAssetId}
+                        </foreach>
+                      GROUP BY DATA_ASSET_FIELD_NAME) t ON ac.ASSET_COLUMNS = t.DATA_ASSET_FIELD_NAME
+    WHERE ac.data_asset_api_id IN
+       <foreach collection="dataAssetIds" item="dataAssetId" index="index" open="(" close=")" separator=",">
+            #{dataAssetId}
+       </foreach>
+      AND ac.TYPE = 2
+      <choose>
+        <when test="hasAuth">
+           AND t.DATA_ASSET_FIELD_NAME IS NOT NULL
+        </when>
+        <otherwise>
+           AND t.DATA_ASSET_FIELD_NAME IS NULL
+         </otherwise>
+      </choose>
+
+  </select>
+
+</mapper>

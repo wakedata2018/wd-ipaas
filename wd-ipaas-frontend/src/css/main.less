@@ -1,0 +1,122 @@
+@import './var.less';
+@import './bd.less';
+
+body,
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: @body-backgroud;
+  overflow: hidden;
+  font-family: microsoft yahei;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.header-alarm-dialog-content-tooltip {
+  width: 100%;
+  max-width: 1000px;
+  background: #303133 !important;
+  max-height: 300px;
+  overflow-y: auto;
+  border: none !important;
+
+  .tootip-content {
+    color: white;
+    font-size: 12px;
+  }
+}
+
+// sql模式示例值
+.el-message-box__wrapper .el-message-box.example {
+  width: 740px;
+}
+
+// 强制覆盖dss-ui的样式 用作样式统一
+.el-table {
+  color: @dss-font-color-1;
+  thead {
+    color: @dss-font-color!important;
+  }
+}
+.dss-menu-container .dss-menu {
+  background-color: white !important;
+  border-top: 1px solid @dss-box-shadow;
+  box-shadow: 1px 0 4px 0 @dss-box-shadow;
+  .dss-menu-item {
+    background-color: white !important;
+  }
+}
+
+.dss-menu-container .dss-menu .collapse-icon {
+  background-color: white !important;
+  color: @dss-font-color !important;
+  box-shadow: -3px 0 4px 0 #edf0f3;
+  &:hover i {
+    color: @dss-font-color !important;
+  }
+}
+
+.dss-menu-container .dss-menu .el-menu-ver.el-menu .dss-menu-item.el-menu-item,
+.dss-menu-container .dss-menu .el-menu-ver.el-menu .dss-menu-item.el-submenu .el-submenu__title {
+  color: @dss-font-color !important;
+  background-color: white !important;
+  height: 56px !important;
+  line-height: 56px !important;
+  &.is-active {
+    color: @dss--primary-color!important;
+  }
+}
+
+.dss-menu-container .dss-menu .el-menu-ver.el-menu .dss-menu-item.el-menu-item i[icon-font],
+.dss-menu-container .dss-menu .el-menu-ver.el-menu .dss-menu-item.el-submenu .el-submenu__title i[icon-font] {
+  color: @dss-font-color !important;
+}
+
+.dss-menu-container .dss-menu .el-menu-ver.el-menu > .dss-menu-item.el-menu-item.is-active:before,
+.dss-menu-container .dss-menu .el-menu-ver.el-menu > .dss-menu-item.el-submenu.is-active > .el-submenu__title:before {
+  border: 2px solid white !important;
+}
+
+.dss-menu-container .dss-menu .el-submenu.is-active > .el-submenu__title span {
+  color: @primary-color!important;
+}
+
+.dss-menu .is-active {
+  color: @primary-color!important;
+}
+
+.dss-menu-container .dss-menu .el-menu-ver.el-menu > .dss-menu-item.el-menu-item.is-active i,
+.dss-menu-container .dss-menu .el-menu-ver.el-menu > .dss-menu-item.el-submenu.is-active > .el-submenu__title i {
+  color: @primary-color!important;
+}
+
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
+  background-color: white;
+}
+
+.fat-actions {
+  gap: 0 var(--fat-table-actions-gap, 10px) !important;
+}
+
+.dss-status-success {
+  color: @dss--success-color;
+}
+
+.dss-status-error {
+  color: @dss--danger-color;
+}

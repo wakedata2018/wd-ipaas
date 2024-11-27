@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.event.SubscribeRecordMapper">
+
+
+    <!--流程编排-事件接收-即将运行的topic和API-->
+    <select id="getUseTopicCountExceptApiId" resultType="java.lang.Integer">
+        <![CDATA[
+        SELECT
+            COUNT( 1 )
+        FROM
+            DW_OPEN_EVENT_SUBSCRIBE_ADDRESS_RELA
+        WHERE
+            1 = 1
+            AND TOPIC_ID = #{topicId}
+            AND API_ID <> #{apiId}
+            AND EVENT_CENTER_ID IS NOT NULL
+        ]]>
+    </select>
+
+    <update id="updateByApiId">
+        UPDATE DW_OPEN_EVENT_SUBSCRIBE_ADDRESS_RELA
+        SET EVENT_CENTER_ID = #{subscribeRecordFromEventCenter}
+        WHERE
+            1 = 1
+          AND API_ID = #{apiId}
+    </update>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.ApiRuleMapper">
+    <select id="queryRuleByCondition" resultType="com.wakedata.dw.open.model.domain.ApiRuleDo">
+    SELECT
+        r.ID AS id,
+        r.RULE_NAME AS ruleName,
+        r.RULE_DESC AS ruleDesc,
+        r.data_asset_api_id AS dataAssetApiId,
+        a.API_NAME AS apiName,
+        r.DAY_LIMIT AS dayLimit,
+        r.MONTH_LIMIT AS monthLimit,
+        r.TOTAL_LIMIT AS totalLimit,
+        r.QPS AS qps,
+        r.TTL AS ttl,
+        g.ID AS apiGroupId,
+        g.GROUP_NAME AS apiGroupName,
+        a.data_asset_api_method AS apiPath
+    FROM
+        DW_OPEN_API_RULE r
+        INNER JOIN DW_OPEN_API a ON r.data_asset_api_id = a.DATA_ASSET_API_ID
+        INNER JOIN DW_OPEN_API_GROUP g ON a.API_GROUP_ID = g.ID
+    WHERE
+        g.LESSEE_ID = #{lesseeId}
+        <if test="groupId != null">
+            AND g.ID = #{groupId}
+        </if>
+        <if test="apiKeyWord != null">
+            AND a.API_NAME LIKE CONCAT('%',#{apiKeyWord},'%')
+        </if>
+        ORDER BY r.CREATE_TIME desc
+    </select>
+</mapper>

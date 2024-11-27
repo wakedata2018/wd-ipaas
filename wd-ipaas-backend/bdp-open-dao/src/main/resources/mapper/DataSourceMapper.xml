@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.datasource.DataSourceMapper">
+    <select id="findByPo" resultType="com.wakedata.dw.open.model.datasource.DataSourcePo">
+        SELECT
+            ID AS id,
+            CONNECTION_NAME AS connectionName,
+            DB_TYPE AS dbType,
+            DB_NAME AS dbName,
+            DB_HOST AS dbHost,
+            DB_PORT AS dbPort,
+            DB_USERNAME AS dbUsername,
+            DB_PASSWORD AS dbPassword,
+            ZK_NODE AS zkNode,
+            DB_DESCRIPTION AS description,
+            CHILDREN_ID AS childrenId,
+            PARENT_ID AS parentId,
+            URL AS url
+        FROM
+            DW_OPEN_DATASOURCE_CONFIG
+        WHERE LESSEE_ID = #{dataSourcePo.lesseeId}
+        <if test="dataSourcePo.connectionName != null">
+            AND CONNECTION_NAME like concat('%',#{dataSourcePo.connectionName},'%')
+        </if>
+        <if test="dataSourcePo.dbType != null">
+            AND DB_TYPE = #{dataSourcePo.dbType}
+        </if>
+    </select>
+    
+</mapper>

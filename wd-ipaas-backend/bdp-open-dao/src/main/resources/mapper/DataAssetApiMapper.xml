@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.DataAssetApiMapper">
+    <resultMap id="ApiCollectResultMapper" type="com.wakedata.dw.open.model.domain.ApiCollectDo">
+        <id column="DATA_ASSET_API_ID" property="dataAssetApiId"/>
+        <result column="API_NAME" property="apiName"/>
+        <result column="API_DESCRIPTION" property="apiDescription"/>
+        <result column="UPDATE_FREQUENCY" property="updateFrequency"/>
+        <result column="RESPONSE_CONTENT_TYPE" property="responseContentType"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="DATA_ASSET_API_METHOD" property="dataAssetApiUrl"/>
+        <result column="API_GROUP_ID" property="apiGroupId"/>
+        <result column="GROUP_NAME" property="groupName"/>
+        <result column="COLLECTED" property="collected"/>
+        <result column="APPROVAL" property="approval"/>
+        <result column="CREATED" property="created"/>
+        <result column="API_TYPE" property="apiType"/>
+    </resultMap>
+
+    <resultMap id="BASE_RESULT_MAP" type="com.wakedata.dw.open.model.api.DataAssetApiPo">
+        <id column="data_asset_api_id" property="dataAssetApiId"/>
+        <result column="data_asset_name" property="dataAssetName"/>
+        <result column="data_asset_description" property="dataAssetDescription"/>
+        <result column="in_charge" property="inCharge"/>
+        <result column="data_asset_publish_status" property="dataAssetPublishStatus"/>
+        <result column="data_asset_api_method" property="dataAssetApiMethod"/>
+        <result column="icon_url" property="iconUrl"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="api_type" property="apiType"/>
+        <result column="api_sql" property="apiSql"/>
+        <result column="operation_type" property="operationType"/>
+        <result column="is_http_subscriber" property="isHttpSubscriber"/>
+        <result column="event_center_id" property="eventCenterId"/>
+
+        <result column="datasource_config_id" property="dataSourceId"/>
+        <result column="api_name" property="apiName"/>
+        <result column="update_frequency" property="updateFrequency"/>
+        <result column="protocol" property="protocol"/>
+        <result column="secret" property="secret"/>
+        <result column="api_group_id" property="apiGroupId"/>
+        <result column="api_description" property="apiDescription"/>
+        <result column="response_content_type" property="responseContentType"/>
+        <result column="req_method" property="reqMethod"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="publisher" property="publisher"/>
+        <result column="approval_status" property="approvalStatus"/>
+        <result column="publish_time" property="publishTime"/>
+    </resultMap>
+    <resultMap id="BASE_RESULT_MAP_QUERY" type="com.wakedata.dw.open.model.api.DataAssetApiPo">
+        <id column="DATA_ASSET_API_ID" property="dataAssetApiId"/>
+        <result column="DATA_ASSET_NAME" property="dataAssetName"/>
+        <result column="DATA_ASSET_DESCRIPTION" property="dataAssetDescription"/>
+        <result column="IN_CHARGE" property="inCharge"/>
+        <result column="DATA_ASSET_PUBLISH_STATUS" property="dataAssetPublishStatus"/>
+        <result column="DATA_ASSET_API_METHOD" property="dataAssetApiMethod"/>
+        <result column="DATASOURCE_CONFIG_ID" property="dataSourceId"/>
+        <result column="API_NAME" property="apiName"/>
+        <result column="UPDATE_FREQUENCY" property="updateFrequency"/>
+        <result column="PROTOCOL" property="protocol"/>
+        <result column="SECRET" property="secret"/>
+        <result column="API_GROUP_ID" property="apiGroupId"/>
+        <result column="API_DESCRIPTION" property="apiDescription"/>
+        <result column="RESPONSE_CONTENT_TYPE" property="responseContentType"/>
+        <result column="REQ_METHOD" property="reqMethod"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="PUBLISHER" property="publisher"/>
+        <result column="APPROVAL_STATUS" property="approvalStatus"/>
+        <result column="data_access_app_id" property="accessAppId"/>
+        <result column="DATA_ACCESS_APP_NAME" property="accessAppName"/>
+    </resultMap>
+    <select id="listByCollect" parameterType="java.lang.String" resultMap="ApiCollectResultMapper">
+        SELECT
+            T1.DATA_ASSET_API_ID,
+            T1.API_NAME,
+            T1.API_DESCRIPTION,
+            T1.UPDATE_FREQUENCY,
+            T1.RESPONSE_CONTENT_TYPE,
+            T1.UPDATE_TIME,
+            T1.DATA_ASSET_API_METHOD,
+            T1.API_GROUP_ID,
+            T1.API_TYPE,
+            T4.GROUP_NAME,
+            T5.APPROVAL_ID,
+            CASE WHEN T2.ID IS NULL THEN 0 ELSE 1 END AS COLLECTED,
+            CASE WHEN T3.DATA_ACCESS_RULE_ID IS NULL THEN 0 ELSE 1 END AS APPROVAL,
+            CASE WHEN T5.APPROVAL_ID IS NULL THEN 0 ELSE 1 END AS CREATED
+        FROM DW_OPEN_API AS T1
+        LEFT JOIN (
+            SELECT
+                ID, DATA_ASSET_API_ID,DATA_ACCESS_APP_ID
+            FROM DW_OPEN_COLLECT
+            WHERE USERNAME = #{username}
+            <if test="appId">
+                AND DATA_ACCESS_APP_ID = #{appId}
+            </if>
+            GROUP BY DATA_ASSET_API_ID,DATA_ACCESS_APP_ID
+        ) AS T2 ON T1.DATA_ASSET_API_ID = T2.DATA_ASSET_API_ID
+        LEFT JOIN (
+            SELECT
+                DATA_ACCESS_RULE_ID, DATA_ASSET_API_ID
+            FROM DW_OPEN_APP_ACCESS_RULE
+            WHERE DATA_ACCESS_APP_ID IN (
+                    SELECT DATA_ACCESS_APP_ID
+                    FROM DW_OPEN_APP_ACCESS
+                    WHERE IN_CHARGE = #{username} AND LESSEE_ID = #{lesseeId}
+                    <if test="appId">
+                        AND DATA_ACCESS_APP_ID = #{appId}
+                    </if>
+            )
+            GROUP BY DATA_ASSET_API_ID
+        ) AS T3 ON T1.DATA_ASSET_API_ID = T3.DATA_ASSET_API_ID
+        INNER JOIN DW_OPEN_API_GROUP AS T4 ON T1.API_GROUP_ID = T4.ID
+        LEFT JOIN (
+            SELECT APPROVAL_ID, DATA_ASSET_ID, data_access_app_id
+            FROM DW_OPEN_APPROVAL
+            WHERE APPROVAL_STATUS = 0
+            AND data_access_app_id in (
+                SELECT DATA_ACCESS_APP_ID
+                FROM DW_OPEN_APP_ACCESS
+                WHERE IN_CHARGE = #{username}  AND LESSEE_ID = #{lesseeId}
+                <if test="appId">
+                    AND DATA_ACCESS_APP_ID = #{appId}
+                </if>
+            )
+        GROUP BY DATA_ASSET_ID
+        ) AS T5 ON T1.DATA_ASSET_API_ID = T5.DATA_ASSET_ID
+        WHERE DATA_ASSET_PUBLISH_STATUS = 1
+        <if test="dataAssetId">
+          AND T1.DATA_ASSET_API_ID=#{dataAssetId}
+        </if>
+        <if test="lesseeId">
+            AND T1.LESSEE_ID=#{lesseeId}
+        </if>
+        GROUP BY T1.DATA_ASSET_API_ID
+    </select>
+
+    <select id="publishedCount" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM DW_OPEN_API
+        WHERE DATA_ASSET_PUBLISH_STATUS = 1
+        <if test="lesseeId != null">
+            AND LESSEE_ID = #{lesseeId}
+        </if>
+        AND CREATE_TIME >= DATE_FORMAT(NOW(), '%Y-%m-%d 00:00:00')
+    </select>
+    <select id="listMyCollect" resultMap="BASE_RESULT_MAP_QUERY">
+        SELECT
+            T2.DATA_ACCESS_APP_ID AS data_access_app_id, T4.DATA_ACCESS_APP_NAME,
+            T1.DATA_ASSET_API_ID,T1.API_NAME,T1.DATA_ASSET_NAME,T1.DATA_ASSET_DESCRIPTION,T1.DATA_ASSET_API_METHOD,T1.PUBLISHER,T1.UPDATE_TIME,
+            T1.DATA_ASSET_PUBLISH_STATUS,T2.CREATE_TIME,T3.APPROVAL_STATUS
+        FROM DW_OPEN_API AS T1
+        INNER JOIN (
+            SELECT ID, DATA_ASSET_API_ID,DATA_ACCESS_APP_ID,CREATE_TIME
+            FROM DW_OPEN_COLLECT
+            WHERE USERNAME = #{username}
+            <if test="accessAppId">
+                AND DATA_ACCESS_APP_ID = #{accessAppId}
+            </if>
+            GROUP BY DATA_ASSET_API_ID, DATA_ACCESS_APP_ID
+        ) AS T2 ON T1.DATA_ASSET_API_ID = T2.DATA_ASSET_API_ID
+        LEFT JOIN
+        (
+            SELECT a.DATA_ASSET_ID, data_access_app_id, APPROVAL_STATUS
+            FROM DW_OPEN_APPROVAL a
+            INNER JOIN
+            (
+                SELECT DATA_ASSET_ID, MAX( UPDATE_TIME ) AS UPDATE_TIME FROM DW_OPEN_APPROVAL GROUP BY DATA_ASSET_ID
+            ) b
+            ON a.UPDATE_TIME = b.UPDATE_TIME AND a.DATA_ASSET_ID = b.DATA_ASSET_ID
+            WHERE  a.LESSEE_ID = #{lesseeId}
+            AND a.USER_IDENTIFICATION = #{username}
+        ) T3 ON T1.DATA_ASSET_API_ID = T3.DATA_ASSET_ID
+        inner  join (
+            select DATA_ACCESS_APP_ID,DATA_ACCESS_APP_NAME from DW_OPEN_APP_ACCESS where IN_CHARGE = #{username}
+            AND LESSEE_ID = #{lesseeId}
+        )T4 on T4.DATA_ACCESS_APP_ID = T2.DATA_ACCESS_APP_ID
+        WHERE  T1.LESSEE_ID = #{lesseeId}
+        <if test="dataAssetId != null">
+            AND T1.DATA_ASSET_API_ID=#{dataAssetId}
+        </if>
+        <if test="keyword != null">
+            AND T1.API_NAME like concat('%',#{keyword},'%')
+        </if>
+        ORDER BY T2.CREATE_TIME DESC
+    </select>
+
+    <select id="countHistoryAsset" resultType="java.lang.Integer">
+        SELECT
+            SUM(num) AS assetNum
+        FROM
+            (
+                SELECT
+                    SUM(RESULT) num
+                FROM
+                    DW_OPEN_ACCESS_STATISTICS
+                WHERE
+                    STAT_TYPE = 11
+                    AND RECORD_DATA = #{dataAssetId}
+                UNION ALL
+                SELECT
+                    COUNT(*) num
+                FROM
+                    DW_OPEN_ACCESS_LOG
+                WHERE
+                    CREATE_TIME >= DATE_FORMAT( NOW(), '%Y-%m-%d 00:00:00' )
+                    AND data_asset_api_id = #{dataAssetId}) a
+    </select>
+    <select id="countTodayAsset" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        DW_OPEN_ACCESS_LOG
+        WHERE
+        data_asset_api_id = #{dataAssetId}
+        AND
+        CREATE_TIME BETWEEN DATE_FORMAT( CURDATE(), '%Y-%m-%d %H:%i:%s' ) AND NOW()
+        <if test="success">
+            AND RESULT_CODE = 200
+        </if>
+        <if test="failed">
+            AND RESULT_CODE != 200
+        </if>
+    </select>
+
+    <select id="countTimesHour" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') as cusDate,
+            count(*) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H');
+    </select>
+
+    <select id="countTimesDay" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') as cusDate,
+            count(*) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d');
+    </select>
+
+    <select id="countTimesHourError" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') as cusDate,
+            count(*) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        AND
+            RESULT_CODE != 200
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H');
+    </select>
+
+    <select id="countTimesDayError" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') as cusDate,
+            count(*) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        AND
+            RESULT_CODE != 200
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d');
+    </select>
+
+    <select id="countQpsHour" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') as cusDate,
+            ROUND(count(*)/60/60,5) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H');
+    </select>
+
+    <select id="countQpsDay" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') as cusDate,
+            ROUND(count(*)/24/60/60,5) as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') > #{subTime}
+        AND
+            data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d');
+    </select>
+
+    <select id="countTakeTimeHour" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+        SELECT cusDate,
+            ROUND(AVG(num),5) as num
+         FROM (SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H') as cusDate,
+            ELAPSED as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H')  > #{subTime}
+            AND data_asset_api_id = #{dataAssetId}) a
+        GROUP BY  cusDate
+    </select>
+
+    <select id="countTakeTimeDay" resultType="com.wakedata.dw.open.model.domain.ApiCountResultDo">
+         SELECT cusDate,
+            ROUND(AVG(num),5) as num
+         FROM (SELECT DATE_FORMAT(CREATE_TIME,'%Y-%m-%d') as cusDate,
+            ELAPSED as num
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            DATE_FORMAT(CREATE_TIME,'%Y-%m-%d')  > #{subTime}
+            AND data_asset_api_id = #{dataAssetId}) a
+        GROUP BY  cusDate
+    </select>
+
+    <select id="countAppTimesDay" resultType="com.wakedata.dw.open.model.domain.AppTimesDo">
+        SELECT
+            DATA_ACCESS_APP_NAME as appName,
+            IN_CHARGE as inCharge,
+            count(*) as num
+        FROM
+            DW_OPEN_APP_ACCESS p
+            INNER JOIN DW_OPEN_ACCESS_LOG l ON p.DATA_ACCESS_APP_ID = l.data_access_app_id
+        WHERE
+            DATE_FORMAT( l.CREATE_TIME, '%Y-%m-%d' ) > #{subTime}
+            AND data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATA_ACCESS_APP_NAME,
+            IN_CHARGE
+        ORDER BY
+            num
+        DESC
+        LIMIT 5
+    </select>
+
+    <select id="countAppTimesHour" resultType="com.wakedata.dw.open.model.domain.AppTimesDo">
+        SELECT
+            DATA_ACCESS_APP_NAME as appName,
+            IN_CHARGE as inCharge,
+            count(*) as num
+        FROM
+            DW_OPEN_APP_ACCESS p
+            INNER JOIN DW_OPEN_ACCESS_LOG l ON p.DATA_ACCESS_APP_ID = l.data_access_app_id
+        WHERE
+            DATE_FORMAT( l.CREATE_TIME, '%Y-%m-%d %H' ) > #{subTime}
+            AND data_asset_api_id = #{dataAssetId}
+        GROUP BY
+            DATA_ACCESS_APP_NAME,
+            IN_CHARGE
+        ORDER BY
+            num
+        DESC
+        LIMIT 5
+    </select>
+
+  <insert id="addOrUpdateApi" useGeneratedKeys="true" keyProperty="dataAssetApi.dataAssetApiId" >
+        INSERT INTO DW_OPEN_API(DATA_ASSET_NAME, DATA_ASSET_DESCRIPTION
+                , IN_CHARGE, DATA_ASSET_PUBLISH_STATUS, DATA_ASSET_API_METHOD
+                , UPDATE_TIME, CREATE_TIME, ICON_URL
+                , API_NAME, UPDATE_FREQUENCY, PROTOCOL
+                , SECRET, API_GROUP_ID, API_DESCRIPTION
+                , RESPONSE_CONTENT_TYPE, REQ_METHOD, DATASOURCE_CONFIG_ID
+                , PUBLISHER, LESSEE_ID, API_TYPE
+                , API_SQL, OPERATION_TYPE, IS_HTTP_SUBSCRIBER
+                , EVENT_CENTER_ID,resp_mapping_rule
+        ) VALUES(#{dataAssetApi.dataAssetName}, #{dataAssetApi.dataAssetDescription}
+                , #{dataAssetApi.inCharge}, #{dataAssetApi.dataAssetPublishStatus}, #{dataAssetApi.dataAssetApiMethod}
+                , #{dataAssetApi.updateTime}, #{dataAssetApi.createTime}, #{dataAssetApi.iconUrl}
+                , #{dataAssetApi.apiName}, #{dataAssetApi.updateFrequency}, #{dataAssetApi.protocol}
+                , #{dataAssetApi.secret}, #{dataAssetApi.apiGroupId}, #{dataAssetApi.apiDescription}
+                , #{dataAssetApi.responseContentType}, #{dataAssetApi.reqMethod}, #{dataAssetApi.dataSourceId}
+                , #{dataAssetApi.publisher}, #{dataAssetApi.lesseeId}, #{dataAssetApi.apiType}
+                , #{dataAssetApi.apiSql}, #{dataAssetApi.operationType}, #{dataAssetApi.isHttpSubscriber}
+                , #{dataAssetApi.eventCenterId},#{dataAssetApi.respMappingRule}
+        ) ON DUPLICATE KEY UPDATE DATA_ASSET_NAME = VALUES(DATA_ASSET_NAME), ICON_URL = VALUES(ICON_URL)
+                , DATA_ASSET_DESCRIPTION = VALUES(DATA_ASSET_DESCRIPTION), IN_CHARGE = VALUES(IN_CHARGE)
+                , DATA_ASSET_API_METHOD = VALUES(DATA_ASSET_API_METHOD), UPDATE_TIME = VALUES(UPDATE_TIME)
+                , API_NAME = VALUES(API_NAME), UPDATE_FREQUENCY = VALUES(UPDATE_FREQUENCY)
+                , PROTOCOL = VALUES(PROTOCOL), SECRET = VALUES(SECRET), API_GROUP_ID = VALUES(API_GROUP_ID)
+                , API_DESCRIPTION = VALUES(API_DESCRIPTION), RESPONSE_CONTENT_TYPE = VALUES(RESPONSE_CONTENT_TYPE)
+                , REQ_METHOD = VALUES(REQ_METHOD), DATASOURCE_CONFIG_ID = VALUES(DATASOURCE_CONFIG_ID)
+                , LESSEE_ID = VALUES(LESSEE_ID), API_TYPE = VALUES(API_TYPE)
+                , API_SQL = VALUES(API_SQL), OPERATION_TYPE = VALUES(OPERATION_TYPE)
+                , IS_HTTP_SUBSCRIBER = VALUES(IS_HTTP_SUBSCRIBER)
+                , EVENT_CENTER_ID = VALUES(EVENT_CENTER_ID),resp_mapping_rule = VALUES(resp_mapping_rule)
+    </insert>
+
+  <select id="listByAppIdGroupIdName" resultType="com.wakedata.dw.open.model.api.dto.AuthApiRespDTO">
+     SELECT DISTINCT a.DATA_ASSET_API_ID AS dataAssetApiId,
+                     a.API_NAME AS apiName
+     FROM DW_OPEN_APP_ACCESS_RULE r, DW_OPEN_API a
+     WHERE r.DATA_ACCESS_APP_ID = #{appId}
+       AND r.DATA_ASSET_API_ID = a.DATA_ASSET_API_ID
+       AND a.API_GROUP_ID IN
+      <foreach collection="apiGroupIds" open="(" close=")" separator="," index="index" item="apiGroupId">
+        #{apiGroupId}
+      </foreach>
+      <if test=" apiName != null and apiName != ''">
+         AND a.API_NAME LIKE CONCAT('%',#{apiName},'%')
+      </if>
+  </select>
+
+  <select id="listNotAuthApi" resultType="com.wakedata.dw.open.model.api.DataAssetApiPo">
+    SELECT
+        oa.DATA_ASSET_API_ID AS dataAssetApiId,
+        oa.DATA_ASSET_DESCRIPTION AS dataAssetDescription,
+        oa.API_DESCRIPTION AS apiDescription,
+        oa.PUBLISHER AS publisher,
+        oa.IN_CHARGE AS inCharge,
+        oa.API_NAME AS apiName,
+        oa.DATA_ASSET_API_METHOD AS dataAssetApiMethod,
+        oa.DATA_ASSET_NAME AS dataAssetName
+    FROM DW_OPEN_API oa
+        LEFT JOIN (
+            SELECT DATA_ASSET_ID FROM DW_OPEN_APPROVAL WHERE data_access_app_id = #{accessAppId} AND APPROVAL_STATUS = 2) t
+        ON oa.DATA_ASSET_API_ID = t.DATA_ASSET_ID
+    WHERE oa.LESSEE_ID = #{lesseeId}
+      AND oa.DATA_ASSET_PUBLISH_STATUS = 1
+      AND t.DATA_ASSET_ID IS NULL
+    <if test="apiGroupIds !=null and apiGroupIds.size()>0">
+      AND oa.API_GROUP_ID IN
+          <foreach collection="apiGroupIds" open="(" close=")" separator="," index="index" item="apiGroupId">
+            #{apiGroupId}
+          </foreach>
+    </if>
+    <if test="apiName != null and apiName != ''">
+      AND oa.API_NAME LIKE CONCAT('%',#{apiName},'%')
+    </if>
+    <if test="inCharge != null and inCharge != ''">
+      AND oa.IN_CHARGE = #{inCharge}
+    </if>
+  </select>
+
+  <select id="findByIds" resultMap="BASE_RESULT_MAP">
+        select * from dw_open_api
+        where data_asset_api_id in
+        <foreach collection="ids" separator="," open="(" close=")" item="id">
+          #{id}
+        </foreach>
+  </select>
+
+    <select id="selectPageList" resultMap="BASE_RESULT_MAP">
+        select t1.data_asset_api_id,t1.data_asset_name,t1.data_asset_description,t1.in_charge,t1.data_asset_publish_status,
+               t1.data_asset_api_method,t1.update_time,t1.create_time,t1.icon_url,t1.api_name,t1.update_frequency,t1.protocol,
+               t1.secret,t1.api_group_id,t1.api_description,t1.response_content_type,t1.req_method,t1.datasource_config_id,
+               t1.publisher,t1.lessee_id,t1.api_type,t1.api_sql,t1.operation_type,t1.is_http_subscriber,t1.event_center_id,t1.publish_time,t2.approval_status
+        from dw_open_api t1
+        LEFT JOIN
+            (select approval.* from
+                (select * from dw_open_approval
+                    <where>
+                        approval_business_type = 2
+                        and active_status = 1
+                        <if test="query.lesseeId != null">
+                            AND lessee_id = #{query.lesseeId}
+                        </if>
+                    </where>
+                having 1 order by create_time desc)
+            approval group by data_asset_api_id) t2
+        ON t1.data_asset_api_id = t2.data_asset_api_id and t2.approval_business_type = 2
+        <where>
+            <if test="query.startPublishTime != null and query.endPublishTime != null">
+                AND t1.publish_time BETWEEN #{query.startPublishTime} AND #{query.endPublishTime}
+                AND t1.data_asset_publish_status = 1
+            </if>
+            <if test="query.dataAssetApiMethod">
+                AND t1.data_asset_api_method like concat('%',#{query.dataAssetApiMethod},'%')
+            </if>
+            <if test="query.apiGroupId != null">
+                AND t1.api_group_id = #{query.apiGroupId}
+            </if>
+            <if test="query.apiName != null  and query.apiName != ''">
+                AND t1.api_name  like concat('%',#{query.apiName},'%')
+            </if>
+            <if test="query.apiType != null and query.apiType != -1">
+                AND t1.api_type = #{query.apiType}
+            </if>
+            <if test="query.dataAssetPublishStatus != null and query.dataAssetPublishStatus != -1 ">
+                AND t1.data_asset_publish_status = #{query.dataAssetPublishStatus}
+            </if>
+            <if test="query.secret != null">
+                AND t1.secret = #{query.secret}
+            </if>
+            <if test="query.apiApplyStatus != null and query.apiApplyStatus != -1 and query.apiApplyStatus != 0">
+                AND t2.approval_status = #{query.apiApplyStatus}
+            </if>
+            <if test="query.apiApplyStatus != null and query.apiApplyStatus == 0">
+                AND t2.approval_status is null
+            </if>
+
+        </where>
+        order by t1.create_time desc,t1.data_asset_api_id desc
+
+
+    </select>
+    <select id="listByGroupId" resultType="com.wakedata.dw.open.model.api.DataAssetApiPo">
+        SELECT DISTINCT
+        oa.DATA_ASSET_API_ID AS dataAssetApiId,
+        oa.DATA_ASSET_DESCRIPTION AS dataAssetDescription,
+        oa.API_DESCRIPTION AS apiDescription,
+        oa.PUBLISHER AS publisher,
+        oa.IN_CHARGE AS inCharge,
+        oa.API_NAME AS apiName,
+        oa.DATA_ASSET_API_METHOD AS dataAssetApiMethod,
+        oa.DATA_ASSET_NAME AS dataAssetName,
+        oa.api_group_id AS apiGroupId
+        FROM DW_OPEN_API oa
+        WHERE oa.data_asset_publish_status = 1
+        AND oa.secret = 1
+        AND oa.API_GROUP_ID IN
+        <foreach collection="groupIds" open="(" close=")" separator="," index="index" item="groupId">
+            #{groupId}
+        </foreach>
+    </select>
+
+    <select id="listByRespMappingRule" resultType="com.wakedata.dw.open.model.api.DataAssetApiPo">
+        SELECT
+        oa.DATA_ASSET_API_ID AS dataAssetApiId,
+        oa.DATA_ASSET_DESCRIPTION AS dataAssetDescription,
+        oa.API_DESCRIPTION AS apiDescription,
+        oa.PUBLISHER AS publisher,
+        oa.IN_CHARGE AS inCharge,
+        oa.API_NAME AS apiName,
+        oa.DATA_ASSET_API_METHOD AS dataAssetApiMethod,
+        oa.DATA_ASSET_NAME AS dataAssetName,
+        oa.api_group_id AS apiGroupId,
+        oa.resp_mapping_rule as respMappingRule
+        FROM DW_OPEN_API oa
+        WHERE
+        oa.resp_mapping_rule IN
+        <foreach collection="respMappingRules" open="(" close=")" separator="," index="index" item="respMappingRule">
+            #{respMappingRule}
+        </foreach>
+    </select>
+
+    <update id="batchUpdateDataAssetApi" parameterType="java.util.List">
+        UPDATE DW_OPEN_API
+        SET DATA_ASSET_PUBLISH_STATUS = #{publishStatus},
+        UPDATE_TIME = NOW(),
+        PUBLISHER = #{publisher}
+        WHERE data_asset_api_id in
+        <foreach collection="dataAssetApiIds" index="index" item="dataAssetApiId" separator="," open="(" close=")">
+            #{dataAssetApiId}
+        </foreach>
+    </update>
+
+
+    <select id="getPublishApiListByGroupId" resultMap="BASE_RESULT_MAP">
+        SELECT t1.data_asset_api_id,t1.data_asset_name,t1.data_asset_description,t1.in_charge,t1.data_asset_publish_status,
+               t1.data_asset_api_method,t1.update_time,t1.create_time,t1.icon_url,t1.api_name,t1.update_frequency,t1.protocol,
+               t1.secret,t1.api_group_id,t1.api_description,t1.response_content_type,t1.req_method,t1.datasource_config_id,
+               t1.publisher,t1.lessee_id,t1.api_type,t1.api_sql,t1.operation_type,t1.is_http_subscriber,t1.event_center_id,t1.publish_time
+        FROM dw_open_api t1
+        WHERE t1.data_asset_publish_status = 1 AND t1.lessee_id = #{lesseeId} AND t1.api_group_id = #{apiGroupId}
+    </select>
+</mapper>

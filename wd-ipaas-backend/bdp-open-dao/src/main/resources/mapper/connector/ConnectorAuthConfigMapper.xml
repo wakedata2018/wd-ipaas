@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.connector.ConnectorAuthConfigMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.connector.ConnectorAuthConfigPo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="connector_id" property="connectorId"/>
+        <result column="connector_environment_id" property="connectorEnvironmentId"/>
+        <result column="connector_api_id" property="connectorApiId"/>
+        <result column="auth_name" property="authName"/>
+        <result column="auth_identification" property="authIdentification"/>
+        <result column="auth_config" property="authConfig"/>
+        <result column="connectorName" property="connectorName"/>
+        <result column="connectorEnvironmentName" property="connectorEnvironmentName"/>
+        <result column="connnectorApiName" property="connnectorApiName"/>
+        <result column="connectorApiGroupId" property="connectorApiGroupId"/>
+        <result column="status" property="status"/>
+        <result column="connectorApiGroupName" property="connectorApiGroupName"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="column">
+        ag.id,ag.lessee_id,ag.connector_id,ag.connector_environment_id
+        ,ag.connector_api_id,ag.auth_name,ag.auth_identification,ag.auth_config
+        ,ag.create_by,ag.create_time,ag.update_by,ag.update_time,ag.status
+        ,co.name AS connectorName,ea.address_name AS connectorEnvironmentName
+        ,api.api_name AS connnectorApiName
+        ,api.api_group_id AS connectorApiGroupId,agp.group_name AS connectorApiGroupName
+    </sql>
+    <select id="selectList" resultMap="BaseResultMap">
+
+        SELECT <include refid="column"/>
+        FROM dw_open_connector_auth_config ag
+        LEFT JOIN dw_open_connector co ON ag.connector_id = co.id
+        LEFT JOIN dw_open_connector_environment_address ea ON ag.connector_environment_id = ea.id
+        LEFT JOIN dw_open_connector_api api ON ag.connector_api_id = api.id
+        LEFT JOIN dw_open_connector_api_group agp ON api.api_group_id = agp.id
+        WHERE ag.lessee_id = #{query.lesseeId} and co.is_delete &lt;&gt; 1
+        <if test="query.connectorId != null and query.connectorId != ''">
+            AND ag.connector_id = #{query.connectorId}
+        </if>
+        <if test=" query.name != null and query.name != ''">
+            AND ag.auth_name LIKE CONCAT('%',#{query.name},'%')
+        </if>
+        <if test="query.status != null ">
+            and ag.status = #{query.status}
+        </if>
+        <if test=" query.connectorName != null and query.connectorName != ''">
+            AND co.name LIKE CONCAT('%',#{query.connectorName},'%')
+        </if>
+        ORDER BY ag.id DESC
+    </select>
+
+
+    <select id="selectDetail" resultMap="BaseResultMap">
+        SELECT <include refid="column"/>
+        FROM dw_open_connector_auth_config ag
+        LEFT JOIN dw_open_connector co ON ag.connector_id = co.id
+        LEFT JOIN dw_open_connector_environment_address ea ON ag.connector_environment_id = ea.id
+        LEFT JOIN dw_open_connector_api api ON ag.connector_api_id = api.id
+        LEFT JOIN dw_open_connector_api_group agp ON api.api_group_id = agp.id
+        WHERE ag.id = #{connectorAuthConfigId}
+    </select>
+
+</mapper>

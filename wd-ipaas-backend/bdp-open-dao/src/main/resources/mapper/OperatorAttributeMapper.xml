@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.model.api.flow.operator.OperatorAttribute">
+    <resultMap id="OperatorAttribute" type="com.wakedata.dw.open.model.api.flow.operator.OperatorAttribute">
+        <id column="ID" property="id"/>
+        <result column="CLASS_NAME" property="className"/>
+        <result column="LAYER" property="layer"/>
+        <result column="DEFAULT_NAME" property="defaultName"/>
+        <result column="UNIQUE_NAME" property="uniqueName"/>
+        <result column="DESC" property="desc"/>
+        <result column="ORDER" property="ORDER"/>
+        <result column="USE" property="use"/>
+        <result column="TEMPLATE" property="template"/>
+    </resultMap>
+</mapper>

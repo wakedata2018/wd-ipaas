@@ -1,0 +1,28 @@
+@header-height: 52px;
+// 除去header的屏幕高度
+@full-height: ~'calc(100vh - @{header-height})';
+@full-height-scroll: ~'calc(100vh - @{header-height} - 20px)';
+@body-backgroud: #f5f7fa;
+@body-min-height: 720px;
+@body-min-width: 1280px;
+@sider-bar-width: 180px;
+@narrow-sider-bar-width: 54px;
+@primary-color: #2776fb;
+// 不换行，超长 ... 。注意设置 title 属性
+.ellipsis () {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+@dss--color-white: white;
+@dss--primary-color: #2776fb;
+@dss--success-color: #228b22;
+@dss--danger-color: #fb4938;
+@dss--default-backgroud: #f5f7fa;
+@dss--border-color: #eee;
+@dss--color-56680: #566980;
+@dss-font-color: #353b5e;
+@dss-box-shadow: #dce1e6;
+@dss-font-color-1: #333;

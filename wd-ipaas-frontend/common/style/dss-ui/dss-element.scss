@@ -1,0 +1,29 @@
+@import './dss-var.scss';
+// 修改主题颜色
+/* Colors
+-------------------------- */
+$--color-primary: #2776fb;
+
+$--color-success: #228b22 !default;
+$--color-warning: #ff7f56 !default;
+$--color-danger: #fb4938 !default;
+/* $--color-info: #49cee6 !default; */
+
+/* table
+-------------------------*/
+$--table-header-background-color: #f5f7fa !default;
+// $--table-header-background: #dcdde0 !default;
+
+/* input, el-input
+-----------------------------*/
+$--input-border-color: #e4e7ed !default;
+$--input-mini-height: 30px !default;
+$--input-border-radius: 3px !default;
+
+/* Menu
+--------------------------*/
+$--menu-item-color: red; //$--color-primary !default;
+$--menu-item-hover-fill: red !default;
+
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+@import '~element-ui/packages/theme-chalk/src/index';

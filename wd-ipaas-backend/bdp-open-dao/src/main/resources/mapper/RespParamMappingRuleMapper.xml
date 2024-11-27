@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.RespParamMappingRuleMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.api.RespParamMappingRulePo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="resp_param_mapping_rule_name" property="respParamMappingRuleName"/>
+        <result column="resp_param_mapping_rule" property="respParamMappingRule"/>
+        <result column="status" property="status"/>
+        <result column="description" property="description"/>
+        <result column="is_default_rule" property="isDefaultRule"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="column">
+        `id`,
+        `lessee_id` as `lesseeId`,
+        `resp_param_mapping_rule_name` as `respParamMappingRuleName`,
+        `resp_param_mapping_rule_jsonschema` as `respParamMappingRuleJsonSchema`,
+        `resp_param_mapping_rule` as `respParamMappingRule`,
+        `status` as `status`,
+        `description` as `description`,
+        `is_default_rule` as `isDefaultRule`,
+        `create_by` as `createBy`,
+        `update_by` as `updateBy`,
+        `create_time` as `createTime`,
+        `update_time` as `updateTime`
+    </sql>
+    <select id="query" resultType="com.wakedata.dw.open.model.api.RespParamMappingRulePo">
+        (
+            select <include refid="column"/>
+            from dw_open_api_response_param_mapping_rule a1
+            where (a1.is_default_rule = 0 and a1.lessee_id = #{lesseeId})
+            <if test=" query.id != null">
+                AND a1.id = #{query.id}
+            </if>
+            <if test=" query.status != null">
+                AND a1.status = #{query.status}
+            </if>
+            <if test=" query.respParamMappingRuleName != null and query.respParamMappingRuleName != ''">
+                AND a1.resp_param_mapping_rule_name LIKE CONCAT('%',#{query.respParamMappingRuleName},'%')
+            </if>
+            <if test=" query.startTime != null ">
+                AND update_time <![CDATA[ >= ]]> #{query.startTime}
+            </if>
+            <if test=" query.endTime != null ">
+                AND update_time <![CDATA[ <= ]]> #{query.endTime}
+            </if>
+        )
+        union
+        (
+            select
+            <include refid="column"/>
+            from dw_open_api_response_param_mapping_rule a2
+            where a2.is_default_rule = 1
+        ) order by  `updateTime` desc
+    </select>
+
+</mapper>

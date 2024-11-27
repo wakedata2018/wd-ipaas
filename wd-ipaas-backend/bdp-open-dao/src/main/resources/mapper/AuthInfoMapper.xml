@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.auth.AuthInfoMapper">
+
+    <resultMap id="ResultMapOne" type="com.wakedata.dw.open.model.auth.AuthInfoPo">
+        <id column="ID" property="id"/>
+        <result column="APP_NAME" property="appName"/>
+        <result column="APP_LOGO" property="appLogo"/>
+        <result column="APP_TYPE" property="appType"/>
+        <result column="CONFIGS" property="configs"/>
+        <result column="DESCRIPTION" property="description"/>
+        <result column="CREATE_USER" property="createUser"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="API_NUM" property="apiNum"/>
+    </resultMap>
+
+    <delete id="deleteAuthorization">
+        DELETE
+        FROM DW_AUTH_COLLECT
+        WHERE DW_AUTH_INFO_ID = #{authId}
+          AND data_asset_api_id = #{apiId}
+    </delete>
+
+    <select id="countApiByList" resultType="com.wakedata.dw.open.model.auth.AuthCountDo">
+        SELECT
+        DW_AUTH_INFO_ID as authId,
+        count(*) as apiNum
+        FROM DW_AUTH_COLLECT
+        WHERE DW_AUTH_INFO_ID
+        IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        GROUP BY DW_AUTH_INFO_ID
+    </select>
+
+    <select id="selectThirdPartyApiId" resultType="java.lang.Integer">
+        SELECT data_asset_api_id
+        FROM DW_AUTH_COLLECT
+        WHERE DW_AUTH_INFO_ID = #{id}
+    </select>
+
+    <select id="selectApiIdAndName" resultType="com.wakedata.dw.open.model.domain.ApiInfoDo">
+        SELECT
+        DATA_ASSET_API_ID as apiId,
+        API_NAME as apiName
+        FROM DW_OPEN_API
+        WHERE DATA_ASSET_API_ID
+        IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryExternalApplication" resultMap="ResultMapOne"
+            resultType="com.wakedata.dw.open.model.auth.AuthInfoPo">
+        SELECT ID,
+               APP_NAME,
+               APP_LOGO,
+               APP_TYPE,
+               CONFIGS,
+               DESCRIPTION,
+               CREATE_USER,
+               CREATE_TIME,
+               UPDATE_TIME,
+               API_NUM,
+               AUTHORIZATIONAPI
+        FROM DW_AUTH_INFO
+        WHERE ID IN (SELECT DW_AUTH_INFO_ID FROM DW_AUTH_COLLECT WHERE data_asset_api_id = #{id})
+    </select>
+
+    <select id="queryAuthorizationTime" resultType="java.util.Date">
+        SELECT UPDATE_TIME
+        FROM DW_AUTH_COLLECT
+        WHERE data_asset_api_id = #{apiId}
+          AND DW_AUTH_INFO_ID = #{authId}
+    </select>
+
+    <select id="selectByIds" resultMap="ResultMapOne">
+        SELECT ID,APP_NAME,APP_TYPE,CONFIGS,DESCRIPTION,API_NUM
+        FROM DW_AUTH_INFO
+        WHERE ID IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

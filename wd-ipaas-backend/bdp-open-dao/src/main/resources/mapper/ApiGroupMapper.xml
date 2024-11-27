@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.ApiGroupMapper">
+    <resultMap id="AppAccessMap" type="com.wakedata.dw.open.model.domain.ApiGroupDo">
+        <id column="ID" property="apiGroupId"/>
+        <result column="GROUP_NAME" property="groupName"/>
+        <result column="GROUP_PATH" property="groupPath"/>
+        <result column="DATA_ASSET_API_ID" property="apiId"/>
+        <result column="API_NAME" property="apiName"/>
+        <result column="DATA_ASSET_PUBLISH_STATUS" property="publishStatusEnum"/>
+    </resultMap>
+
+    <resultMap id="poMap" type="com.wakedata.dw.open.model.api.ApiGroupPo">
+        <id column="ID" property="id"/>
+        <result column="GROUP_NAME" property="groupName"/>
+        <result column="GROUP_PATH" property="groupPath"/>
+        <result column="CREATE_USER" property="createUser"/>
+        <result column="GROUP_CODE" property="groupCode"/>
+        <result column="GROUP_DESC" property="groupDesc"/>
+        <result column="PARENT_ID" property="parentId"/>
+        <result column="LEVEL" property="level"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="LESSEE_ID" property="lesseeId"/>
+    </resultMap>
+
+    <select id="list" resultMap="AppAccessMap">
+        SELECT
+            T1.ID,
+            T1.GROUP_NAME,
+            T1.GROUP_PATH,
+            T2.DATA_ASSET_API_ID,
+            T2.API_NAME,
+            T2.DATA_ASSET_PUBLISH_STATUS
+        FROM
+            `DW_OPEN_API_GROUP` AS T1
+                LEFT JOIN `DW_OPEN_API` AS T2 ON T1.ID = T2.API_GROUP_ID
+        WHERE T1.LESSEE_ID = #{lesseeId}
+        ORDER BY T1.CREATE_TIME DESC
+    </select>
+
+    <select id="listParentNode" resultType="com.wakedata.dw.open.model.api.ApiGroupPo">
+        SELECT
+            ID as id,
+            GROUP_NAME as groupName,
+            GROUP_PATH as groupPath,
+            CREATE_USER as createUser,
+            GROUP_DESC as groupDesc,
+            PARENT_ID as parentId,
+            CREATE_TIME as createTime,
+            UPDATE_TIME as updateTime,
+            LEVEL as level
+        FROM
+            DW_OPEN_API_GROUP
+        WHERE
+            PARENT_ID = #{parentId} AND LESSEE_ID = #{lesseeId}
+        ORDER  BY CREATE_TIME DESC
+    </select>
+
+    <select id="findParentNodes" resultType="com.wakedata.dw.open.model.api.ApiGroupPo">
+        SELECT
+            ID as id,
+            GROUP_NAME as groupName,
+            GROUP_PATH as groupPath,
+            CREATE_USER as createUser,
+            GROUP_DESC as groupDesc,
+            PARENT_ID as parentId
+        FROM
+            DW_OPEN_API_GROUP
+        WHERE
+            ID = #{id}
+    </select>
+
+    <select id="buildGroupIds" resultType="java.lang.Integer">
+        SELECT ID FROM DW_OPEN_API_GROUP WHERE PARENT_ID = #{apiGroupId}
+    </select>
+
+    <insert id="addOrUpdateApiGroup" useGeneratedKeys="true" keyProperty="apiGroup.id" >
+        INSERT INTO DW_OPEN_API_GROUP(GROUP_NAME, GROUP_PATH, CREATE_USER
+               , GROUP_DESC, PARENT_ID, LEVEL
+               , LESSEE_ID, CREATE_TIME, UPDATE_TIME
+        ) VALUES(#{apiGroup.groupName}, #{apiGroup.groupPath}, #{apiGroup.createUser}
+               , #{apiGroup.groupDesc}, #{apiGroup.parentId}, #{apiGroup.level}
+               , #{apiGroup.lesseeId}, #{apiGroup.createTime}, #{apiGroup.updateTime}
+        ) ON DUPLICATE KEY UPDATE GROUP_NAME = VALUES(GROUP_NAME)
+               , GROUP_PATH = VALUES(GROUP_PATH), CREATE_USER = VALUES(CREATE_USER)
+               , GROUP_DESC = VALUES(GROUP_DESC), PARENT_ID = VALUES(PARENT_ID), LEVEL = VALUES(LEVEL)
+               , LESSEE_ID = VALUES(LESSEE_ID), UPDATE_TIME = VALUES(UPDATE_TIME)
+    </insert>
+
+    <select id="pageLike" resultMap="poMap">
+        select
+               id,group_name,group_code,create_user,group_path,group_desc,
+               create_time,update_time,lessee_id,parent_id,level,create_time,update_time,lessee_id
+        from dw_open_api_group
+        <where>
+            <if test="apiGroupPo.groupCode != null">
+                AND group_code = #{apiGroupPo.groupCode}
+            </if>
+            <if test="apiGroupPo.groupName != null">
+                AND  group_name like concat('%',#{apiGroupPo.groupName},'%')
+            </if>
+        </where>
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="queryApiGroupListByIds" resultMap="poMap">
+        select id,group_name,group_code,create_user,group_path,group_desc,
+               create_time,update_time,lessee_id,parent_id,level,create_time,update_time,lessee_id
+        from dw_open_api_group
+        <where>
+            <if test="apiGroupIdList !=null and apiGroupIdList.size()>0">
+                AND id IN
+                <foreach collection="apiGroupIdList" open="(" close=")" separator="," index="index" item="id">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getContainApiGroupList" resultMap="poMap">
+
+        SELECT
+            ag.id,ag.group_name,ag.group_code,ag.create_user,ag.group_path,ag.group_desc,
+            ag.create_time,ag.update_time,ag.lessee_id,ag.parent_id,ag.level
+        FROM dw_open_api_group ag
+                 LEFT JOIN dw_open_api api ON ag.id = api.api_group_id AND ag.lessee_id = api.lessee_id
+        WHERE ag.lessee_id = #{lesseeId} AND api.data_asset_publish_status = 1
+        GROUP BY ag.id
+
+    </select>
+
+</mapper>

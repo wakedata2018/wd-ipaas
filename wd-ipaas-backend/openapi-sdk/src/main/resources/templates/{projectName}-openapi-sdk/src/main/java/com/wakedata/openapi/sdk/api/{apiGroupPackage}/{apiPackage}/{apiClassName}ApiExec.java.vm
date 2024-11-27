@@ -1,0 +1,75 @@
+package com.wakedata.openapi.sdk.api.${api.groupPackage}.${api.apiPackage};
+
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.json.JSONUtil;
+import com.wakedata.openapi.sdk.common.OpenApiRequestUtil;
+import com.wakedata.openapi.sdk.common.OpenApiUrl;
+import com.wakedata.openapi.sdk.common.TypeConvertUtil;
+#if(${api.containHead})
+import com.wakedata.openapi.sdk.api.${api.groupPackage}.${api.apiPackage}.${api.className}RequestHead;
+#end
+#if(${api.containParam})
+import com.wakedata.openapi.sdk.api.${api.groupPackage}.${api.apiPackage}.${api.className}RequestParam;
+#end
+#if(${api.containBody})
+import com.wakedata.openapi.sdk.api.${api.groupPackage}.${api.apiPackage}.${api.className}RequestBody;
+#end
+
+import java.util.Map;
+
+/**
+ * ${api.desc}
+ * api执行
+ * @author luomeng
+ * @date ${dateTime}
+ */
+public class ${api.className}ApiExec {
+
+    /**
+     * 执行api
+     * @param accessToken token
+     * @param appSecret 应用密钥
+     *
+     * @return
+     */
+    public static HttpResponse execute(String accessToken, String appSecret
+        #if(${api.containHead})
+                , ${api.className}RequestHead requestHead
+        #end
+        #if(${api.containParam})
+            , ${api.className}RequestParam requestParam
+        #end
+        #if(${api.containBody})
+            , ${api.className}RequestBody requestBody
+        #end
+    ) {
+        //设置请求头
+    #if(${api.containHead})
+    Map<String, String> head = TypeConvertUtil.convert(requestHead);
+    #else
+    Map<String, String> head = null;
+    #end
+    //设置请求参数
+    #if(${api.containParam})
+    Map<String, String> param = TypeConvertUtil.convert(requestParam);
+    #else
+    Map<String, String> param = null;
+    #end
+    //设置请求体
+    #if(${api.containBody})
+    String body = ObjectUtil.isNull(requestBody) ? null : JSONUtil.toJsonStr(requestBody);
+    #else
+    String body = null;
+    #end
+    String api = OpenApiUrl.${api.groupName}Api.${api.pathName};
+    #if(${api.method} == "GET")
+    return OpenApiRequestUtil.get(accessToken, appSecret, String.valueOf(System.currentTimeMillis()), api, head, param);
+    #else
+    return OpenApiRequestUtil.post(accessToken, appSecret, String.valueOf(System.currentTimeMillis()), api, head, param, body);
+    #end
+
+    }
+
+
+}

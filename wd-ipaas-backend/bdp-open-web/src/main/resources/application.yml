@@ -1,0 +1,151 @@
+server:
+  servlet:
+    session:
+      timeout: 60m
+    context-path: /dw/open
+  port: 8081
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    #    default-property-inclusion: NON_NULL
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  cache: redis
+  redis:
+    host: ${redis.host}
+    password: ${redis.password}
+    port: ${redis.port}
+  cloud:
+    sentinel:
+      log.dir: /data/log/wakedata/sentinel
+      transport:
+        dashboard: localhost:8082
+        heartbeat-interval-ms: 500
+  application:
+    name: wd_ipaas
+  mvc:
+    backend:
+      prefix: /
+      api:
+        prefix: /api
+        max-page-size: 2000
+      indi:
+        prefix: /dw/indi
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2097152
+      file-size-threshold: 0
+      max-request-size: 2097152
+      location: /data/wakedata/upload_temp
+  datasource:
+    url: ${common.mysql.url}
+    username: ${common.mysql.username}
+    password: ${common.mysql.password}
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 100
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  liquibase:
+    change-log:
+  mail:
+    host: smtp.xxx.com
+    username: xxx
+    password: xxx
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+            required: false
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.wakedata.dw.open.model.domain
+  type-handlers-package: com.wakedata.dw.open.enums,com.wakedata.dw.open.datasource.enums,com.wakedata.dw.open.model.enums
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+mapper:
+  mappers:
+    - tk.mybatis.mapper.common.Mapper
+    - tk.mybatis.mapper.common.special.InsertListMapper
+    - tk.mybatis.mapper.additional.idlist.IdListMapper
+  notEmpty: false
+
+jasypt:
+  encryptor:
+    password: wakedata
+sys:
+  upload:
+    directory: /data/wakedata/dw-opne/documents
+
+open:
+  api:
+    sign:
+      timeout:
+        second: 300000
+#最大连接数
+http:
+  maxTotal: 100
+  #并发数
+  defaultMaxPerRoute: 20
+  #创建连接的最长时间
+  connectTimeout: 1000
+  #从连接池中获取到连接的最长时间
+  connectionRequestTimeout: 500
+  #数据传输的最长时间
+  socketTimeout: 10000
+  #提交请求前测试连接是否可用
+  staleConnectionCheckEnabled: true
+
+## 流程编排框架设置
+liteflow:
+  monitor:
+    delay: 10000
+    enable-log: false
+    period: 10000
+    queue-limit: 300
+  slot-size: 2048
+  when-max-wait-second: 20
+  when-max-workers: 4
+  when-queue-limit: 512
+  #不能指定，指定之后启动时会执行一次该逻辑
+#  rule-source: el_json:com.wakedata.dw.open.liteflow.CustomerApiJsonFlowParse
+
+local:
+  server:
+    path: localhost:8081/dw/open/api/
+
+#xxl-job配置
+wk:
+  xxl-job:
+    appname: wd-ipaas
+
+# redis分布式事务锁
+common:
+  redis-lock:
+    enable: true
+    address: redis://${redis.host}:${redis.port}
+    password: ${redis.password}
+    database: 3
+
+logging:
+  config: classpath:log4j2-console.xml

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.lessee.OpenAccountMapper">
+
+    <select id="selectAccountNum" resultType="int">
+        SELECT COUNT(*) FROM dw_open_account
+        WHERE user_identification = #{userIdentification}
+            <if test="id != null and id > 0">
+                AND id &lt;&gt; #{id}
+            </if>
+    </select>
+
+    <sql id="column_sql">
+        a.id,a.lessee_id as lesseeId,a.user_identification as userIdentification
+        ,a.phone,a.`name`
+        ,a.`status`,a.relate_role_id as relateRoleId,a.is_admin as isAdmin
+        ,a.create_by as createBy,a.create_time as createTime
+        ,a.update_by as updateBy,a.update_time as updateTime
+        ,les.tenant_id as tenantId,les.name AS tenantName
+    </sql>
+
+    <select id="getAccountInfo" resultType="com.wakedata.dw.open.model.vo.OpenAccountVo">
+
+        SELECT <include refid="column_sql"/>
+         FROM dw_open_account a
+        LEFT JOIN dw_open_lessee les ON a.lessee_id = les.id
+        where a.id = #{id}
+
+    </select>
+
+
+    <sql id="query_sql">
+        <if test="userIdentification != null and userIdentification != ''">
+            and a.user_identification like concat('%',#{userIdentification},'%')
+        </if>
+        <if test="tenantName != null and tenantName != ''">
+            and les.name like concat('%',#{tenantName},'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and a.phone like concat('%',#{phone},'%')
+        </if>
+        <if test="relateRoleId != null and relateRoleId != ''">
+            and a.relate_role_id = #{relateRoleId}
+        </if>
+    </sql>
+
+
+    <select id="getAccountByUsername" resultType="com.wakedata.dw.open.model.vo.OpenAccountVo">
+
+        SELECT <include refid="column_sql"/>,a.password
+        FROM dw_open_account a
+        LEFT JOIN dw_open_lessee les ON a.lessee_id = les.id
+        where a.user_identification = #{acount} and a.status = 1
+
+    </select>
+
+    <select id="selectListCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM dw_open_account a
+        LEFT JOIN dw_open_lessee les ON a.lessee_id = les.id
+        where 1 = 1
+        <include refid="query_sql"/>
+    </select>
+
+    <select id="selectList" resultType="com.wakedata.dw.open.model.vo.OpenAccountVo">
+        SELECT <include refid="column_sql"/>
+        FROM dw_open_account a
+        LEFT JOIN dw_open_lessee les ON a.lessee_id = les.id
+        where 1 = 1
+        <include refid="query_sql"/>
+        order by a.create_time DESC
+        LIMIT #{offset},#{pageSize}
+    </select>
+
+</mapper>

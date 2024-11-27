@@ -1,0 +1,38 @@
+package com.wakedata.openapi.sdk.common;
+
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 类型转换
+ * @author luomeng
+ * @date 2022/10/26 16:38
+ */
+public class TypeConvertUtil {
+
+    /**
+     * 对象转map<string,string>
+     * @param data
+     * @return
+     */
+    public static Map<String,String> convert(Object data){
+        if(ObjectUtil.isNull(data)){
+            return null;
+        }
+        Map<String,Object> res = JSONUtil.toBean(JSONUtil.toJsonStr(data), Map.class);
+        Map<String,String> result = new HashMap<>();
+        for(Map.Entry<String,Object> map : res.entrySet()){
+            Object value = map.getValue();
+            if(value instanceof JSON){
+                value = JSONUtil.toJsonStr(value);
+            }
+            result.put(map.getKey(),String.valueOf(value));
+        }
+        return result;
+    }
+
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+<!--    <changeSet id="20191122" author="tanzhi" context="opendev" >-->
+<!--        <sqlFile path="classpath:db/changelog/open-init-new.sql" encoding="utf-8"></sqlFile>-->
+<!--        <sqlFile path="classpath:db/changelog/open-data.sql" encoding="utf-8"></sqlFile>-->
+<!--    </changeSet>-->
+    <changeSet id="20191209" author="tanzhi" context="opentest" >
+        <sqlFile path="classpath:db/changelog/open-init-new.sql" encoding="utf-8"></sqlFile>
+        <sqlFile path="classpath:db/changelog/open-data.sql" encoding="utf-8"></sqlFile>
+    </changeSet>
+</databaseChangeLog>

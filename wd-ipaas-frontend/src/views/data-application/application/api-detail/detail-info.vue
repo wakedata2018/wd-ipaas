@@ -1,0 +1,236 @@
+<template>
+  <el-scrollbar class="page-scrollbar">
+    <div class="page-content" v-if="infoData.baseInfo" v-loading="loading">
+      <div class="page-title">
+        <div class="title-text">
+          {{ infoData ? infoData.baseInfo.apiName : '' }}
+        </div>
+      </div>
+      <div class="page-dec">
+        <div>描述：</div>
+        <div class="dec-text">
+          {{ infoData.baseInfo.apiDescription || '-' }}
+        </div>
+      </div>
+      <div class="info-box">
+        <div class="info-title">调用信息</div>
+        <span class="url">{{ url }}</span>
+        <!-- <el-input v-model="url" class="info-input"></el-input> -->
+        <!-- <span
+          ><el-button
+            type="text"
+            v-clipboard:copy="url"
+            v-clipboard:success="copy"
+            >复制调用URL</el-button
+          ></span
+        > -->
+      </div>
+      <div class="info-box">
+        <div class="info-title">API基本信息</div>
+        <el-row :gutter="20" class="el-row">
+          <el-col :span="7">
+            <div class="grid-content">
+              <div class="row-item">API名称：{{ infoData.baseInfo.apiName || '' }}</div>
+              <div class="row-item">创建人：{{ infoData.baseInfo.publisher || '' }}</div>
+              <!-- <div class="row-item">
+                更新频率：{{ infoData.baseInfo.updateFrequency || "" }}
+              </div> -->
+              <div class="row-item">创建时间：{{ infoData.baseInfo.createTime || '' }}</div>
+            </div>
+          </el-col>
+          <el-col :span="7">
+            <div class="grid-content">
+              <div class="row-item">API路径：{{ infoData.baseInfo.dataAssetApiMethod || '' }}</div>
+
+              <div class="row-item">最近一次修改时间：{{ infoData.baseInfo.updateTime || '' }}</div>
+            </div>
+          </el-col>
+          <el-col :span="7">
+            <div class="grid-content">
+              <div class="row-item">HTTP请求方式：{{ infoData.baseInfo.reqMethod || '' }}</div>
+              <div class="row-item">授权时间：{{ authDate || '-' }}</div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="info-box">
+        <div class="info-title">请求参数</div>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="参数" name="param">
+            <div class="params-title">公共参数</div>
+            <el-table :data="infoData.requiredInput" class="dss-table bd-table">
+              <el-table-column prop="required" label="必填" width="60">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.required == true ? '是' : '否' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="assetColumns" label="参数名"></el-table-column>
+              <el-table-column prop="assetDatatype" label="类型" width="80"></el-table-column>
+              <el-table-column prop="sample" label="示例"></el-table-column>
+              <el-table-column prop="descriptions" label="描述"></el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="返回数据" name="data">
+            <el-table :data="infoData.response" class="dss-table bd-table">
+              <!-- <el-table-column prop="required" label="必填" width="60"></el-table-column> -->
+              <el-table-column prop="assetColumns" label="参数名"></el-table-column>
+              <el-table-column prop="assetDatatype" label="类型"></el-table-column>
+              <!-- <el-table-column prop="sample" label="示例"></el-table-column> -->
+              <el-table-column prop="descriptions" label="描述"></el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </div>
+  </el-scrollbar>
+</template>
+
+<script>
+  import { Message } from 'element-ui';
+
+  export default {
+    props: {
+      infoData: {
+        type: Object,
+        default: () => {
+          return {
+            baseInfo: {},
+          };
+        },
+      },
+      loading: {
+        type: Boolean,
+        default: false,
+      },
+      authDate: {
+        type: String,
+        default: '',
+      },
+      id: {
+        type: Number,
+        default: null,
+      },
+    },
+    data() {
+      return {
+        activeName: 'param',
+      };
+    },
+    mounted() {},
+    watch: {
+      id(val) {
+        if (val) {
+          this.activeName = 'param';
+        }
+      },
+    },
+    computed: {
+      url() {
+        let url = '';
+        const str = window.location.host + '/dw/open/api/';
+        if (this.infoData.baseInfo && this.infoData.baseInfo.dataAssetApiMethod) {
+          url = str + this.infoData.baseInfo.dataAssetApiMethod;
+        }
+        return url;
+      },
+    },
+    methods: {
+      copy(e) {
+        if (e.text) {
+          Message.closeAll();
+          this.$message({
+            message: '复制成功！',
+            type: 'success',
+          });
+        }
+      },
+    },
+  };
+</script>
+
+<style lang="less" scoped>
+  .page-content {
+    background: white;
+    .page-title {
+      padding: 0px 17px;
+      display: flex;
+      position: relative;
+      align-items: center;
+      .relieve-button {
+        position: absolute;
+        right: 50px;
+      }
+      .title-text {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333333;
+        margin-top: 10px;
+      }
+    }
+    .page-dec {
+      padding: 10px 17px;
+      display: flex;
+      font-size: 12px;
+      .dec-text {
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow: hidden;
+        width: 70%;
+        color: #333333;
+      }
+    }
+    .info-box {
+      padding: 0px 17px;
+      .info-title {
+        width: 100%;
+        height: 30px;
+        font-size: 15px;
+        font-weight: bold;
+        border-bottom: 1px solid #e6e6e6;
+      }
+      .url {
+        display: inline-block;
+        max-width: 541px;
+        width: 100%;
+        // height: 30px;
+        line-height: 30px;
+        padding: 10px 0;
+        // border: 1px solid #e6e6e6;
+        font-size: 12px;
+        color: #8d939d;
+      }
+      .info-input {
+        width: 30%;
+        margin: 20px 10px 20px 0px;
+        // font-size: 16px;
+        color: #bdbdbd;
+      }
+      .el-row {
+        margin-bottom: 20px;
+        .row-item {
+          margin-top: 20px;
+          font-size: 12px;
+          word-break: break-all;
+        }
+      }
+      /deep/ .el-tabs__nav-wrap::after {
+        background: transparent;
+      }
+      .params-title {
+        font-size: 14px;
+      }
+      .bd-table {
+        margin-top: 10px;
+      }
+    }
+    .page-scrollbar {
+      overflow-x: hidden;
+      overflow-y: hidden;
+
+      /deep/ .el-scrollbar__wrap {
+        overflow-x: hidden;
+        max-height: calc(100vh - 170px);
+      }
+    }
+  }
+</style>

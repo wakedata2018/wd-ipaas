@@ -1,0 +1,722 @@
+{
+  "dataAssetApi": {
+    "createTime": "2021-05-26 15:37:44",
+    "updateTime": "2021-05-31 10:53:50",
+    "lesseeId": 1,
+    "dataAssetApiId": 215,
+    "inCharge": "zhangxuejun",
+    "dataAssetPublishStatus": "UN_PUBLISH",
+    "dataAssetApiMethod": "ljtest/dag_product",
+    "apiName": "dag_product",
+    "updateFrequency": "DAY",
+    "protocol": "HTTP",
+    "secret": "PRIVATE",
+    "apiGroupId": 80,
+    "responseContentType": "JSON",
+    "reqMethod": "GET",
+    "publisher": "zhangxuejun",
+    "apiType": "LITE_FLOW",
+    "apiAttr": {
+      "clazzName": "com.wakedata.dw.open.model.api.flow.ApiFlowAttr",
+      "id": 2,
+      "apiId": 215,
+      "locationJson": "{\r\n\t\"nodes\": [{\r\n\t\t\"x\": 225,\r\n\t\t\"y\": 151,\r\n\t\t\"outPoints\": [\r\n\t\t\t[1, 0.5]\r\n\t\t],\r\n\t\t\"uniqueName\": \"api_custom_sql\",\r\n\t\t\"label\": \"table_api_for_dag\",\r\n\t\t\"id\": \"table_api_for_dag\"\r\n\t}, {\r\n\t\t\"x\": 625,\r\n\t\t\"y\": 174,\r\n\t\t\"outPoints\": [\r\n\t\t\t[1, 0.5]\r\n\t\t],\r\n\t\t\"inPoints\": [\r\n\t\t\t[0, 0.5]\r\n\t\t],\r\n\t\t\"uniqueName\": \"api_custom_sql\",\r\n\t\t\"label\": \"sql_api_for_dag\",\r\n\t\t\"id\": \"sql_api_for_dag\"\r\n\t}, {\r\n\t\t\"x\": 973,\r\n\t\t\"y\": 308,\r\n\t\t\"outPoints\": [\r\n\t\t\t[1, 0.5]\r\n\t\t],\r\n\t\t\"inPoints\": [\r\n\t\t\t[0, 0.5]\r\n\t\t],\r\n\t\t\"uniqueName\": \"transform_select_column\",\r\n\t\t\"label\": \"select-column\",\r\n\t\t\"id\": \"select-column\"\r\n\t}, {\r\n\t\t\"x\": 946,\r\n\t\t\"y\": 67,\r\n\t\t\"outPoints\": [\r\n\t\t\t[1, 0.5]\r\n\t\t],\r\n\t\t\"inPoints\": [\r\n\t\t\t[0, 0.5]\r\n\t\t],\r\n\t\t\"uniqueName\": \"transform_sql\",\r\n\t\t\"label\": \"transform_select_row\",\r\n\t\t\"id\": \"select-row\"\r\n\t}, {\r\n\t\t\"x\": 1256,\r\n\t\t\"y\": 170,\r\n\t\t\"outPoints\": [\r\n\t\t\t[1, 0.5]\r\n\t\t],\r\n\t\t\"inPoints\": [\r\n\t\t\t[0, 0.5]\r\n\t\t],\r\n\t\t\"uniqueName\": \"transform_sql_union\",\r\n\t\t\"label\": \"Union all编辑\",\r\n\t\t\"id\": \"union-all\"\r\n\t}],\r\n\t\"edges\": [{\r\n\t\t\"id\": \"edgebba49631-c1b1-11eb-9af9-bfb8ed67b084\",\r\n\t\t\"sourceId\": \"table_api_for_dag\",\r\n\t\t\"targetId\": \"sql_api_for_dag\",\r\n\t\t\"start\": {\r\n\t\t\t\"x\": 100,\r\n\t\t\t\"y\": 0\r\n\t\t},\r\n\t\t\"end\": {\r\n\t\t\t\"x\": -100,\r\n\t\t\t\"y\": 0\r\n\t\t}\r\n\t}, {\r\n\t\t\"id\": \"edgecf103491-c1b1-11eb-9af9-bfb8ed67b084\",\r\n\t\t\"sourceId\": \"sql_api_for_dag\",\r\n\t\t\"targetId\": \"select-column\",\r\n\t\t\"start\": {\r\n\t\t\t\"x\": 100,\r\n\t\t\t\"y\": 0\r\n\t\t},\r\n\t\t\"end\": {\r\n\t\t\t\"x\": -100,\r\n\t\t\t\"y\": 0\r\n\t\t}\r\n\t}, {\r\n\t\t\"id\": \"edgedcad5011-c1b1-11eb-9af9-bfb8ed67b084\",\r\n\t\t\"sourceId\": \"sql_api_for_dag\",\r\n\t\t\"targetId\": \"select-row\",\r\n\t\t\"start\": {\r\n\t\t\t\"x\": 98,\r\n\t\t\t\"y\": -3\r\n\t\t},\r\n\t\t\"end\": {\r\n\t\t\t\"x\": -100,\r\n\t\t\t\"y\": 0\r\n\t\t}\r\n\t}, {\r\n\t\t\"id\": \"edgee0af2941-c1b1-11eb-9af9-bfb8ed67b084\",\r\n\t\t\"sourceId\": \"select-row\",\r\n\t\t\"targetId\": \"union-all\",\r\n\t\t\"start\": {\r\n\t\t\t\"x\": 98,\r\n\t\t\t\"y\": -3\r\n\t\t},\r\n\t\t\"end\": {\r\n\t\t\t\"x\": -100,\r\n\t\t\t\"y\": 0\r\n\t\t}\r\n\t}, {\r\n\t\t\"id\": \"edgee1cb2091-c1b1-11eb-9af9-bfb8ed67b084\",\r\n\t\t\"sourceId\": \"select-column\",\r\n\t\t\"targetId\": \"union-all\",\r\n\t\t\"start\": {\r\n\t\t\t\"x\": 100,\r\n\t\t\t\"y\": 0\r\n\t\t},\r\n\t\t\"end\": {\r\n\t\t\t\"x\": -100,\r\n\t\t\t\"y\": 0\r\n\t\t}\r\n\t}],\r\n\t\"count\": 5\r\n}",
+      "operators": {
+        "start": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.VertexOperator",
+          "operatorId": "start",
+          "name": "start",
+          "desc": "start",
+          "outputOperators": [
+            "table_api_for_dag"
+          ]
+        },
+        "table_api_for_dag": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.api.ApiOperator",
+          "operatorId": "table_api_for_dag",
+          "name": "table_api_for_dag",
+          "component": {
+            "dataAssetApi": {
+              "createTime": "2021-05-26 15:05:56",
+              "updateTime": "2021-05-26 19:35:50",
+              "lesseeId": 1,
+              "dataAssetApiId": 213,
+              "dataAssetName": "T_STREAM_TASK",
+              "inCharge": "zhangxuejun",
+              "dataAssetPublishStatus": "UN_PUBLISH",
+              "dataAssetApiMethod": "ljtest/table_api_for_dag",
+              "dataSourceId": 56,
+              "apiName": "table_api_for_dag",
+              "updateFrequency": "DAY",
+              "protocol": "HTTP",
+              "secret": "PRIVATE",
+              "apiGroupId": 80,
+              "responseContentType": "JSON",
+              "reqMethod": "GET",
+              "publisher": "zhangxuejun",
+              "apiType": "NORMAL_TABLE",
+              "apiSql": ""
+            },
+            "parameters": [
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6668,
+                "dataAssetId": 213,
+                "assetColumns": "appId",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "接入key",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6669,
+                "dataAssetId": 213,
+                "assetColumns": "seqNo",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "请求流水号，唯一",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622012755682",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6670,
+                "dataAssetId": 213,
+                "assetColumns": "timestamp",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "请求时间戳",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622012755682",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6671,
+                "dataAssetId": 213,
+                "assetColumns": "version",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "版本，默认为1.0",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622012755682",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6672,
+                "dataAssetId": 213,
+                "assetColumns": "sign",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "加密串，所有请求参数按照字典顺序排序后再md5Hex加密",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622012755682",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6673,
+                "dataAssetId": 213,
+                "assetColumns": "pageNo",
+                "assetDatatype": "int",
+                "descriptions": "页码，默认1",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6674,
+                "dataAssetId": 213,
+                "assetColumns": "pageSize",
+                "assetDatatype": "int",
+                "descriptions": "页大小，默认10",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "10",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6675,
+                "dataAssetId": 213,
+                "assetColumns": "ID",
+                "assetDatatype": "bigint",
+                "descriptions": "",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "required": false
+              }
+            ],
+            "results": [
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6676,
+                "dataAssetId": 213,
+                "assetColumns": "ID",
+                "assetDatatype": "bigint",
+                "descriptions": "",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6677,
+                "dataAssetId": 213,
+                "assetColumns": "TASK_NAME",
+                "assetDatatype": "varchar",
+                "descriptions": "任务名称",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6678,
+                "dataAssetId": 213,
+                "assetColumns": "TASK_DESC",
+                "assetDatatype": "varchar",
+                "descriptions": "任务描述",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              },
+              {
+                "createTime": "2021-05-26 15:05:56",
+                "updateTime": "2021-05-26 15:05:56",
+                "id": 6679,
+                "dataAssetId": 213,
+                "assetColumns": "TASK_TYPE",
+                "assetDatatype": "varchar",
+                "descriptions": "任务类型:sql,jar,canvas",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              }
+            ],
+            "publicKind": "self"
+          },
+          "requestParamMappings": [
+            {
+              "field": "ID",
+              "expression": "ID",
+              "operatorId": "table_api_for_dag"
+            },
+            {
+              "field": "appId",
+              "expression": "appId",
+              "operatorId": "start"
+            },
+            {
+              "field": "pageNo",
+              "expression": "pageNo",
+              "operatorId": "start"
+            },
+            {
+              "field": "pageSize",
+              "expression": "pageSize",
+              "operatorId": "start"
+            }
+          ],
+          "outputOperators": [
+            "sql_api_for_dag"
+          ]
+        },
+        "sql_api_for_dag": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.api.ApiOperator",
+          "operatorId": "sql_api_for_dag",
+          "name": "sql_api_for_dag",
+          "component": {
+            "dataAssetApi": {
+              "createTime": "2021-05-26 15:16:30",
+              "updateTime": "2021-05-26 15:48:06",
+              "lesseeId": 1,
+              "dataAssetApiId": 214,
+              "inCharge": "zhangxuejun",
+              "dataAssetPublishStatus": "UN_PUBLISH",
+              "dataAssetApiMethod": "ljtest/sql_api_for_dag",
+              "dataSourceId": 56,
+              "apiName": "sql_api_for_dag",
+              "updateFrequency": "DAY",
+              "protocol": "HTTP",
+              "secret": "PRIVATE",
+              "apiGroupId": 80,
+              "apiDescription": "",
+              "responseContentType": "JSON",
+              "reqMethod": "GET",
+              "publisher": "zhangxuejun",
+              "apiType": "CUSTOM_SQL",
+              "apiSql": "select ID, TASK_NAME from T_STREAM_TASK where ID = ${ID:long}"
+            },
+            "parameters": [
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6689,
+                "dataAssetId": 214,
+                "assetColumns": "appId",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "接入key",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6690,
+                "dataAssetId": 214,
+                "assetColumns": "seqNo",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "请求流水号，唯一",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622014584222",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6691,
+                "dataAssetId": 214,
+                "assetColumns": "timestamp",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "请求时间戳",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622014584222",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6692,
+                "dataAssetId": 214,
+                "assetColumns": "version",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "版本，默认为1.0",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622014584222",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6693,
+                "dataAssetId": 214,
+                "assetColumns": "sign",
+                "assetDatatype": "varchar",
+                "assetColumnsLength": 32,
+                "descriptions": "加密串，所有请求参数按照字典顺序排序后再md5Hex加密",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1622014584222",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6694,
+                "dataAssetId": 214,
+                "assetColumns": "pageNo",
+                "assetDatatype": "int",
+                "descriptions": "页码，默认1",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "1",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6695,
+                "dataAssetId": 214,
+                "assetColumns": "pageSize",
+                "assetDatatype": "int",
+                "descriptions": "页大小，默认10",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "sample": "10",
+                "required": true,
+                "multiValue": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6696,
+                "dataAssetId": 214,
+                "assetColumns": "ID",
+                "assetDatatype": "long",
+                "descriptions": "",
+                "type": "PARAMETERS",
+                "httpParamKind": "QUERY",
+                "required": true
+              }
+            ],
+            "results": [
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6697,
+                "dataAssetId": 214,
+                "assetColumns": "ID",
+                "descriptions": "",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              },
+              {
+                "createTime": "2021-05-26 15:36:24",
+                "updateTime": "2021-05-26 15:36:24",
+                "id": 6698,
+                "dataAssetId": 214,
+                "assetColumns": "TASK_NAME",
+                "descriptions": "",
+                "type": "RESULT",
+                "httpParamKind": "QUERY",
+                "required": false
+              }
+            ],
+            "publicKind": "self"
+          },
+          "requestParamMappings": [
+            {
+              "field": "ID",
+              "expression": "ID",
+              "operatorId": "table_api_for_dag"
+            },
+            {
+              "field": "appId",
+              "expression": "appId",
+              "operatorId": "start"
+            },
+            {
+              "field": "pageNo",
+              "expression": "pageNo",
+              "operatorId": "start"
+            },
+            {
+              "field": "pageSize",
+              "expression": "pageSize",
+              "operatorId": "start"
+            }
+          ],
+          "outputOperators": [
+            "select-row",
+            "select-column"
+          ]
+        },
+        "select-column": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.transform.ColumnSelectTransformOperator",
+          "operatorId": "select-column",
+          "name": "select-column",
+          "outputOperators": [
+            "union-all"
+          ],
+          "responseParamMappings": [
+            {
+              "field": "field1",
+              "expression": "$.sql_api_for_dag.ID"
+            },
+            {
+              "field": "field2",
+              "expression": "$.sql_api_for_dag.ID"
+            }
+          ]
+        },
+        "select-row": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.transform.RowSelectTransformOperator",
+          "operatorId": "select-row",
+          "name": "select-row",
+          "outputOperators": [
+            "union-all"
+          ],
+          "rowExpression": "[?(@.ID >= 250)]"
+        },
+        "union-all": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.sql.UnionTransformOperator",
+          "operatorId": "union-all",
+          "name": "union-all",
+          "outputOperators": [
+            "groovy-script"
+          ]
+        },
+        "groovy-script": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.script.GroovyScriptTransformOperator",
+          "operatorId": "groovy-script",
+          "name": "union-all",
+          "groovy": "package com.wakedata.dw.open.liteflow.utils\n\n          import com.alibaba.fastjson.JSONArray\n          import com.alibaba.fastjson.JSONObject\n          import com.wakedata.dw.open.liteflow.component.api.SimpleNodeComponent\n          import com.wakedata.dw.open.model.api.flow.operator.script.DataConvert\n\n          /**\n           * Groovy Script脚本处理接口示例\n           */\n          class SimpleGroovyDataConvert implements DataConvert<JSONObject> {\n\n  /**\n   * 参数为：入边算子name,入边算子结果\n   * 返回为：自定义，但需为com.alibaba.fastjson.JSON格式\n   *\n   * @param jsonObject\n   * @return\n   */\n  @Override\n  JSONObject convert(JSONObject jsonObject) {\n  JSONObject result = new JSONArray()\n  result.put(SimpleNodeComponent.ID, \"script\")\n  result.put(SimpleNodeComponent.SLOT_INDEX, 2)\n  result.put(SimpleNodeComponent.DATA, \"33\")\n  return result\n}\n}",
+          "outputOperators": ["http_api_for_dag"]
+        },
+        "http_api_for_dag": {
+          "clazzName": "com.wakedata.dw.open.model.api.flow.operator.api.ApiOperator",
+          "operatorId": "http_api_for_dag",
+          "name": "http_api_for_dag",
+          "component": {
+            "dataAssetApi": {
+              "createTime": "2021-05-28 16:25:48",
+              "updateTime": "2021-05-31 14:36:32",
+              "lesseeId": 1,
+              "dataAssetApiId": 223,
+              "inCharge": "zhangxuejun",
+              "dataAssetPublishStatus": "UN_PUBLISH",
+              "dataAssetApiMethod": "ljtest/http_api_for_dag",
+              "apiName": "http_api_for_dag",
+              "updateFrequency": "DAY",
+              "protocol": "HTTP",
+              "secret": "PRIVATE",
+              "apiGroupId": 80,
+              "responseContentType": "JSON",
+              "reqMethod": "GET",
+              "publisher": "zhangxuejun",
+              "apiType": "EXTERNAL_HTTP",
+              "apiAttr": {
+                "clazzName": "com.wakedata.dw.open.model.api.external.http.HttpExternalApiAttr",
+                "id": 35,
+                "apiId": 223,
+                "host": "http://www.weather.com.cn",
+                "path": "/data/sk/101010100.html",
+                "timeout": 0,
+                "resultExample": "{}",
+                "errorExample": "{}"
+              }
+            },
+            "parameters": [{
+              "createTime": "2021-05-31 14:36:32",
+              "updateTime": "2021-05-31 14:36:32",
+              "id": 7051,
+              "dataAssetId": 223,
+              "assetColumns": "ID",
+              "assetDatatype": "varchar",
+              "type": "PARAMETERS",
+              "httpParamKind": "QUERY",
+              "required": false
+            }, {
+              "createTime": "2021-05-31 14:36:32",
+              "updateTime": "2021-05-31 14:36:32",
+              "id": 7052,
+              "dataAssetId": 223,
+              "assetColumns": "HEADER",
+              "assetDatatype": "varchar",
+              "type": "PARAMETERS",
+              "httpParamKind": "HEAD",
+              "required": false
+            }, {
+              "createTime": "2021-05-31 14:36:32",
+              "updateTime": "2021-05-31 14:36:32",
+              "id": 7053,
+              "dataAssetId": 223,
+              "assetColumns": "BODY",
+              "assetDatatype": "varchar",
+              "type": "PARAMETERS",
+              "httpParamKind": "BODY",
+              "required": false
+            }],
+            "results": [{
+              "createTime": "2021-05-31 14:36:32",
+              "updateTime": "2021-05-31 14:36:32",
+              "id": 7054,
+              "dataAssetId": 223,
+              "assetColumns": "__ALL__",
+              "descriptions": "所有信息",
+              "type": "RESULT",
+              "httpParamKind": "QUERY",
+              "required": false,
+              "multiValue": false
+            }]
+          },
+          "requestParamMappings": [
+            {
+              "field": "ID",
+              "expression": "id",
+              "operatorId": "groovy-script"
+            },
+            {
+              "field": "HEADER",
+              "expression": "slot_index",
+              "operatorId": "groovy-script"
+            },
+            {
+              "field": "BODY",
+              "expression": "data",
+              "operatorId": "groovy-script"
+            }
+          ],
+          "outputOperators": []
+        }
+      }
+    }
+  },
+  "parameters": [
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6983,
+      "dataAssetId": 215,
+      "assetColumns": "appId",
+      "assetDatatype": "varchar",
+      "assetColumnsLength": 32,
+      "descriptions": "接入key",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6984,
+      "dataAssetId": 215,
+      "assetColumns": "seqNo",
+      "assetDatatype": "varchar",
+      "assetColumnsLength": 32,
+      "descriptions": "请求流水号，唯一",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "1622012755682",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6985,
+      "dataAssetId": 215,
+      "assetColumns": "timestamp",
+      "assetDatatype": "varchar",
+      "assetColumnsLength": 32,
+      "descriptions": "请求时间戳",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "1622012755682",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6986,
+      "dataAssetId": 215,
+      "assetColumns": "version",
+      "assetDatatype": "varchar",
+      "assetColumnsLength": 32,
+      "descriptions": "版本，默认为1.0",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "1622012755682",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6987,
+      "dataAssetId": 215,
+      "assetColumns": "sign",
+      "assetDatatype": "varchar",
+      "assetColumnsLength": 32,
+      "descriptions": "加密串，所有请求参数按照字典顺序排序后再md5Hex加密",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "1622012755682",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6988,
+      "dataAssetId": 215,
+      "assetColumns": "pageNo",
+      "assetDatatype": "int",
+      "descriptions": "页码，默认1",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "1",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6989,
+      "dataAssetId": 215,
+      "assetColumns": "pageSize",
+      "assetDatatype": "int",
+      "descriptions": "页大小，默认10",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "sample": "10",
+      "required": true,
+      "multiValue": false
+    },
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6990,
+      "dataAssetId": 215,
+      "assetColumns": "ID",
+      "assetDatatype": "bigint",
+      "descriptions": "",
+      "type": "PARAMETERS",
+      "httpParamKind": "QUERY",
+      "required": false
+    }
+  ],
+  "results": [
+    {
+      "createTime": "2021-05-31 10:53:50",
+      "updateTime": "2021-05-31 10:53:50",
+      "id": 6991,
+      "dataAssetId": 215,
+      "assetColumns": "union-all",
+      "type": "RESULT",
+      "httpParamKind": "QUERY",
+      "required": false,
+      "multiValue": false
+    }
+  ]
+}

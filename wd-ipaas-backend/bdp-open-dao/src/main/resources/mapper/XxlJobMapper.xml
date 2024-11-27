@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.xxljob.XxlJobMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.xxljob.XxlJobDO">
+        <id column="id" property="id"/>
+        <result column="data_asset_app_id" property="dataAssetAppId"/>
+        <result column="data_asset_api_id" property="dataAssetApiId"/>
+        <result column="api_group_id" property="apiGroupId"/>
+        <result column="api_head_param" property="apiHeadParam"/>
+        <result column="api_query_param" property="apiQueryParam"/>
+        <result column="api_body_param" property="apiBodyParam"/>
+        <result column="task_name" property="taskName"/>
+        <result column="task_type" property="taskType"/>
+        <result column="task_execute_type" property="taskExecuteType"/>
+        <result column="task_start_time" property="taskStartTime"/>
+        <result column="task_end_time" property="taskEndTime"/>
+        <result column="task_execute_amount" property="taskExecuteAmount"/>
+        <result column="task_cron" property="taskCron"/>
+        <result column="task_desc" property="taskDesc"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="xxl_time_stamp" property="xxlTimeStamp"/>
+        <result column="execute_time" property="executeTime"/>
+    </resultMap>
+
+    <select id="selectPageList" resultMap="BaseResultMap">
+        select  id,data_asset_app_id,data_asset_api_id,api_group_id,api_head_param,api_query_param,api_body_param
+        ,task_name,task_type,task_execute_type,task_start_time,task_end_time,task_execute_amount,task_cron,task_desc
+        ,lessee_id,create_time,create_by,update_time,update_by,execute_time
+        from dw_open_xxl_job_info
+        <where>
+            <if test="query.taskName != null">
+                AND (task_name like CONCAT('%',#{query.taskName},'%'))
+            </if>
+            <if test="query.taskType != null">
+                AND task_type = #{query.taskType}
+            </if>
+            <if test="query.lesseeId != null">
+                AND lessee_id = #{query.lesseeId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addXxlJob" useGeneratedKeys="true" keyProperty="xxlJobDO.id">
+        insert into dw_open_xxl_job_info
+            (data_asset_app_id,data_asset_api_id,api_group_id,api_head_param,api_query_param,api_body_param
+            ,task_name,task_type,task_execute_type,task_start_time,task_end_time,task_execute_amount,task_cron,task_desc
+            ,lessee_id,create_time,create_by,update_time,update_by,xxl_time_stamp)
+        values
+            (#{xxlJobDO.dataAssetAppId},#{xxlJobDO.dataAssetApiId},#{xxlJobDO.apiGroupId},#{xxlJobDO.apiHeadParam},#{xxlJobDO.apiQueryParam},#{xxlJobDO.apiBodyParam}
+            ,#{xxlJobDO.taskName},#{xxlJobDO.taskType},#{xxlJobDO.taskExecuteType},#{xxlJobDO.taskStartTime},#{xxlJobDO.taskEndTime},#{xxlJobDO.taskExecuteAmount},#{xxlJobDO.taskCron},#{xxlJobDO.taskDesc}
+            ,#{xxlJobDO.lesseeId},#{xxlJobDO.createTime},#{xxlJobDO.createBy},#{xxlJobDO.updateTime},#{xxlJobDO.updateBy},#{xxlJobDO.xxlTimeStamp})
+    </insert>
+
+</mapper>

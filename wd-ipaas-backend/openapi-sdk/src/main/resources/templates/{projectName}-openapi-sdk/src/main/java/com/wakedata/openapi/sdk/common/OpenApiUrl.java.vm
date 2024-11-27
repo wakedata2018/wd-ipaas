@@ -1,0 +1,56 @@
+package com.wakedata.openapi.sdk.common;
+
+/**
+ * 请求url配置
+ * @author luomeng
+ * @date ${dateTime}
+ */
+public class OpenApiUrl {
+
+    /**
+     * todo 请求域名(需修改成对应环境的配置)
+     */
+    public static final String REQUEST_HOST = "${apiRequestHost}";
+
+    /**
+     * token相关api
+     */
+    public static class AccessToken {
+
+        /**
+         * 获取授权token
+         */
+        public static final String GET_ACCESS_TOKEN = REQUEST_HOST + "/dw/open/api/auth/get.access.token";
+
+        /**
+         * 刷新token
+         */
+        public static final String REFRESH_TOKEN = REQUEST_HOST + "/dw/open/api/auth/refresh.token";
+
+        /**
+         * 校验token是否有效
+         */
+        public static final String CHECK_TOKEN = REQUEST_HOST + "/dw/open/api/auth/check.token";
+
+    }
+    #foreach($apiGroup in $apiGroupList)
+
+        /**
+         * ${apiGroup.desc}
+         */
+        public static class ${apiGroup.name}Api {
+
+            #foreach($apiInfo in $apiGroup.apiList)
+
+                /**
+                 * ${apiInfo.desc}
+                 */
+                public static final String ${apiInfo.pathName} = REQUEST_HOST + "/dw/open/api/platform/${apiInfo.url}";
+
+            #end
+
+        }
+
+    #end
+
+}

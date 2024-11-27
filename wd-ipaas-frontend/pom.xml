@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.meizu.base</groupId>
+    <artifactId>parent.node</artifactId>
+    <version>2.2.2</version>
+  </parent>
+  <groupId>com.wakedata.node</groupId>
+  <artifactId>dss-open</artifactId>
+  <version>5.1.9-SNAPSHOT</version>
+  <name>dss-open</name>
+  <url>http://maven.apache.org</url>
+  <description>数据开放服务平台</description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-ant-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <webResources>
+            <resource>
+              <directory>dist</directory>
+            </resource>
+          </webResources>
+          <target>
+            <echo>打包静态资源...</echo>
+            <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}-resources.zip">
+              <zipfileset dir="${project.build.directory}/${project.artifactId}-${project.version}" prefix="">
+                <!-- <exclude name="*.html"/> -->
+                <exclude name="META-INF/**"/>
+                <exclude name="WEB-INF/**"/>
+              </zipfileset>
+            </zip>
+            <echo>打包页面...</echo>
+            <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}-node-server.zip">
+              <zipfileset dir="${project.build.directory}/${project.artifactId}-${project.version}" prefix="node-server">
+                <include name="*.html"/>
+                <include name="**/*.html"/>
+                <include name="*.ico"/>
+                <include name="*.txt"/>
+              </zipfileset>
+            </zip>
+          </target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

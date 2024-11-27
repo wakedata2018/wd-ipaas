@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.AppAccessMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.api.AppAccessPo">
+        <result column="DATA_ACCESS_APP_ID" property="dataAccessAppId"/>
+        <result column="DATA_ACCESS_APP_NAME" property="dataAccessAppName"/>
+        <result column="DATA_ACCESS_KEY" property="dataAccessKey"/>
+        <result column="DATA_ACCESS_SECRET" property="dataAccessSecret"/>
+        <result column="DATA_ACCESS_DESCRIPTION" property="dataAccessDescription"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="IN_CHARGE" property="inCharge"/>
+        <result column="USERNAME" property="username"/>
+        <result column="STATUS" property="status"/>
+        <result column="DATA_ACCESS_AUTH_TYPE" property="authType"/>
+        <result column="APP_TYPE" property="appType"/>
+        <result column="LOW_CODE_LOGO" property="lowCodeLogo"/>
+        <result column="publish_status" property="publishStatus"/>
+        <result column="connector_auth_id" property="connectorAuthId"/>
+        <result column="data_access_prefix" property="dataAccessPrefix"/>
+        <result column="lessee_id" property="lesseeId"/>
+    </resultMap>
+    <sql id="Bean_Where_Clause">
+        <where>
+            <if test="dataAccessAppId">
+                and DATA_ACCESS_APP_ID = #{dataAccessAppId}
+            </if>
+            <if test="dataAccessAppName">
+                and DATA_ACCESS_APP_NAME = #{dataAccessAppName}
+            </if>
+            <if test="dataAccessKey">
+                and DATA_ACCESS_KEY = #{dataAccessKey}
+            </if>
+            <if test="dataAccessSecret">
+                and DATA_ACCESS_SECRET = #{dataAccessSecret}
+            </if>
+            <if test="dataAccessDescription">
+                and DATA_ACCESS_DESCRIPTION = #{dataAccessDescription}
+            </if>
+            <if test="createTime">
+                and CREATE_TIME = #{createTime}
+            </if>
+            <if test="updateTime">
+                and UPDATE_TIME = #{updateTime}
+            </if>
+            <if test="inCharge">
+                and IN_CHARGE = #{inCharge}
+            </if>
+            <if test="username">
+                and USERNAME = #{username}
+            </if>
+            <if test="status">
+                and `STATUS`=#{status}
+            </if>
+            <if test="approvalMessage">
+                and APPROVAL_MESSAGE=#{approvalMessage}
+            </if>
+            <if test="lesseeId">
+                and LESSEE_ID = #{lesseeId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectWithOutSecret" resultMap="BaseResultMap">
+        SELECT DATA_ACCESS_APP_ID, DATA_ACCESS_APP_NAME, DATA_ACCESS_KEY, DATA_ACCESS_DESCRIPTION, CREATE_TIME,
+        UPDATE_TIME,IN_CHARGE,USERNAME,DATA_ACCESS_AUTH_TYPE,connector_auth_id,data_access_prefix
+        FROM DW_OPEN_APP_ACCESS
+        <include refid="Bean_Where_Clause"/>
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(1)
+        from DW_OPEN_APP_ACCESS
+        WHERE `STATUS` = 1
+        <if test="lesseeId != null">
+            AND LESSEE_ID = #{lesseeId}
+        </if>
+        AND CREATE_TIME >= DATE_FORMAT( NOW(), '%Y-%m-%d 00:00:00' )
+    </select>
+
+    <select id="countApi" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM  DW_OPEN_API
+        <if test="dataAssetId != null">
+            WHERE DATA_ASSET_API_ID = #{dataAssetId}
+        </if>
+    </select>
+
+    <select id="countApiByList" resultType="com.wakedata.dw.open.model.domain.AppCountDo">
+        SELECT
+        DATA_ACCESS_APP_ID as appId,
+        count(*) AS apiNum
+        FROM
+        ( SELECT DATA_ASSET_API_ID, DATA_ACCESS_APP_ID FROM DW_OPEN_APPROVAL WHERE  APPROVAL_STATUS = 2 AND
+        DATA_ACCESS_APP_ID
+        IN
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        GROUP BY DATA_ASSET_API_ID,DATA_ACCESS_APP_ID ) a
+        INNER JOIN DW_OPEN_API b ON a.DATA_ASSET_API_ID = b.DATA_ASSET_API_ID
+        GROUP BY
+        a.DATA_ACCESS_APP_ID;
+    </select>
+
+    <select id="getAppReferenceApi" resultType="com.wakedata.dw.open.model.domain.ApiInfoDo">
+        SELECT
+            DISTINCT(p.DATA_ASSET_API_ID) AS apiId,
+            a.API_NAME AS apiName
+        FROM
+            DW_OPEN_APPROVAL p
+            INNER JOIN DW_OPEN_API a ON p.DATA_ASSET_API_ID = a.DATA_ASSET_API_ID
+        WHERE
+            DATA_ACCESS_APP_ID = #{appId}
+            AND p.APPROVAL_STATUS = 2;
+
+    </select>
+
+    <select id="getAppAuthDate" resultType="java.util.Date">
+        SELECT
+            MAX(UPDATE_TIME)
+        FROM
+            `DW_OPEN_APPROVAL`
+        WHERE
+            DATA_ASSET_API_ID = #{apiId}
+            AND DATA_ACCESS_APP_ID = #{appId}
+            AND APPROVAL_STATUS = 2
+    </select>
+
+    <select id="listPermissionApp" resultType="com.wakedata.dw.open.model.api.AppAccessPo">
+        SELECT
+            DATA_ACCESS_APP_NAME AS dataAccessAppName,
+            DATA_ACCESS_APP_ID AS dataAccessAppId,
+            p.IN_CHARGE as inCharge
+        FROM
+            DW_OPEN_APPROVAL a
+            INNER JOIN DW_OPEN_APP_ACCESS p ON a.DATA_ACCESS_APP_ID = p.DATA_ACCESS_APP_ID
+        WHERE
+            a.DATA_ASSET_API_ID = #{apiId}
+            AND a.APPROVAL_STATUS = 2
+        GROUP BY DATA_ACCESS_APP_ID
+        ORDER BY a.CREATE_TIME DESC
+    </select>
+    <select id="pageList" resultMap="BaseResultMap">
+        select
+        DATA_ACCESS_APP_ID,DATA_ACCESS_APP_NAME,DATA_ACCESS_KEY,DATA_ACCESS_SECRET,DATA_ACCESS_DESCRIPTION,CREATE_TIME,UPDATE_TIME,
+        IN_CHARGE,USERNAME,STATUS,DATA_ACCESS_AUTH_TYPE,APP_TYPE,LOW_CODE_LOGO,publish_status,connector_auth_id,data_access_prefix,lessee_id
+        from dw_open_app_access
+        <where>
+            <if test="appAccessPo.startTime != null and appAccessPo.endTime != null">
+                AND CREATE_TIME BETWEEN #{appAccessPo.startTime} AND #{appAccessPo.endTime}
+            </if>
+            <if test="appAccessPo.dataAccessAppName != null">
+                AND  DATA_ACCESS_APP_NAME like concat('%',#{appAccessPo.dataAccessAppName},'%')
+            </if>
+            <if test="appAccessPo.lesseeId != null">
+                AND  LESSEE_ID = #{appAccessPo.lesseeId}
+            </if>
+            <if test="appAccessPo.dataAccessKey != null">
+                AND  DATA_ACCESS_KEY like concat('%',#{appAccessPo.dataAccessKey},'%')
+            </if>
+        </where>
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+</mapper>

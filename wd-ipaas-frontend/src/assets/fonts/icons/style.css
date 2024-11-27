@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?m43kap');
+  src:  url('fonts/icomoon.eot?m43kap#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?m43kap') format('truetype'),
+    url('fonts/icomoon.woff?m43kap') format('woff'),
+    url('fonts/icomoon.svg?m43kap#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.bdp-icon {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-down:before {
+  content: "\e900";
+}
+.icon-arrow-up:before {
+  content: "\e901";
+}
+.icon-collapse:before {
+  content: "\e902";
+}
+.icon-home:before {
+  content: "\e903";
+}
+.icon-logout:before {
+  content: "\e904";
+}
+.icon-user:before {
+  content: "\e905";
+}

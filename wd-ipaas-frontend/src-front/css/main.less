@@ -1,0 +1,43 @@
+@import './var.less';
+@import './bd.less';
+body,
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: @body-backgroud;
+  overflow: hidden;
+  font-family: microsoft yahei;
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.header-alarm-dialog-content-tooltip {
+  width: 100%;
+  max-width: 1000px;
+  background: #303133 !important;
+  max-height: 300px;
+  overflow-y: auto;
+  border: none !important;
+
+  .tootip-content {
+    color: white;
+    font-size: 12px;
+  }
+}
+
+.token-popper-datepicker {
+  .el-picker-panel__link-btn.el-button--text {
+    display: none;
+  }
+}

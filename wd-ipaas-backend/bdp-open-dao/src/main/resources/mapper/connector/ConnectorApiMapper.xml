@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.connector.ConnectorApiMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.connector.ConnectorApiPo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="connector_id" property="connectorId"/>
+        <result column="api_group_id" property="apiGroupId"/>
+        <result column="api_name" property="apiName"/>
+        <result column="api_method" property="apiMethod"/>
+        <result column="req_method" property="reqMethod"/>
+        <result column="api_type" property="apiType"/>
+        <result column="api_description" property="apiDescription"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id="column">
+        id,
+        lessee_id as lesseeId,
+        connector_id as connectorId,
+        api_group_id as apiGroupId,
+        api_name as apiName,
+        api_method as apiMethod,
+        enable_status as enableStatus,
+        req_method as reqMethod,
+        api_type as apiType,
+        api_description as apiDescription,
+        create_by as createBy,
+        create_time as createTime,
+        update_by as updateBy,
+        update_time as updateTime
+    </sql>
+    <select id="query" resultType="com.wakedata.dw.open.model.connector.ConnectorApiPo">
+        select <include refid="column" />
+        from dw_open_connector_api a
+        where 1 = 1
+        <if test=" query.id != null and query.id != ''">
+            AND a.id = #{query.id}
+        </if>
+        <if test=" query.connectorId != null and query.connectorId != ''">
+            AND a.connector_id = #{query.connectorId}
+        </if>
+        <if test=" query.apiGroupId != null and query.apiGroupId != ''">
+            AND a.api_group_id = #{query.apiGroupId}
+        </if>
+        <if test=" query.apiName != null and query.apiName != ''">
+            AND a.api_name LIKE CONCAT('%',#{query.apiName},'%')
+        </if>
+        <if test=" query.apiMethod != null and query.apiMethod != ''">
+            AND a.api_method LIKE CONCAT('%',#{query.apiMethod},'%')
+        </if>
+    </select>
+
+</mapper>

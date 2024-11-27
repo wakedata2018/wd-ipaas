@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.BlackListMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.api.BlackListPo">
+        <id column="ID" property="id"/>
+        <result column="DATA_ACCESS_APP_ID" property="dataAccessAppId"/>
+        <result column="DATA_ACCESS_APP_NAME" property="dataAccessAppName"/>
+        <result column="IP" property="ip"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+    </resultMap>
+
+    <select id="getBlackList" resultMap="BaseResultMap">
+        SELECT A.ID                   AS ID,
+               A.DATA_ACCESS_APP_ID   AS DATA_ACCESS_APP_ID,
+               A.IP                   AS IP,
+               B.DATA_ACCESS_APP_NAME AS DATA_ACCESS_APP_NAME,
+               A.UPDATE_TIME          AS UPDATE_TIME,
+               A.CREATE_TIME          AS CREATE_TIME
+        FROM DW_OPEN_BLACK_LIST AS A
+                 INNER JOIN DW_OPEN_APP_ACCESS AS B
+                            ON A.DATA_ACCESS_APP_ID = B.DATA_ACCESS_APP_ID AND A.DATA_ACCESS_APP_ID = #{accessAppId}
+    </select>
+    <select id="checkBlockList" resultType="java.lang.String">
+        SELECT IP
+        FROM DW_OPEN_BLACK_LIST
+        WHERE DATA_ACCESS_APP_ID in (
+            SELECT DATA_ACCESS_APP_ID
+            FROM DW_OPEN_APP_ACCESS
+            WHERE DATA_ACCESS_KEY = #{appKey}
+        )
+    </select>
+
+</mapper>

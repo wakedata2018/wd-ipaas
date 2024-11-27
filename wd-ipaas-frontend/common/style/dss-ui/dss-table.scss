@@ -1,0 +1,41 @@
+/* 表格样式
+***************/
+@import './dss-var.scss';
+.dss-table {
+  border-top: 1px solid $dss--table-border-color;
+  border-left: 1px solid $dss--table-border-color;
+  border-right: 1px solid $dss--table-border-color;
+
+  th.is-leaf {
+    border-bottom: none;
+  }
+
+  &::before  {
+    background: $dss--table-border-color;
+  }
+
+  th {
+    font-weight:600;
+    color: $dss--table-td-color;
+    padding: 4px 0 3px;
+    font-size: 14px;
+  }
+
+  .el-table__body {
+    tr.el-table__row--striped {
+      td {
+        background:rgba(247,249,252,1);
+      }
+    }
+
+    td {
+      min-height: 50px;
+      font-size: $dss--table-td-font-size;
+      color: $dss--table-td-color;
+    }
+
+    tr:last-child td {
+      border-bottom: 1px solid $dss--table-border-color;
+    }
+  }
+}

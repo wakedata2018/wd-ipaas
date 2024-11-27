@@ -1,0 +1,157 @@
+logging:
+  config: classpath:log4j2-console.xml
+jasypt:
+  encryptor:
+    password: wakedata
+sys:
+  env: wakedata
+  dubbo:
+    file: dubbo-consumer-dev.properties
+  upload:
+    directory: C:\\Users\\admin\\Documents
+
+spring:
+  datasource:
+    url: jdbc:mysql://172.26.63.165:3306/wd_ipaas?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: mysqluser
+    password: mysqluser
+    mail:
+      host: mail.countrygarden.com.cn
+      port: 587
+      username: bgyszgldt@countrygarden.com.cn
+      password: bgy2019@
+      domain: '@countrygarden.com.cn'
+      properties:
+        mail:
+          smtp:
+            auth: true
+            timeout: 30000
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
+    check-change-log-location: true
+    contexts: wdtest
+    default-schema: DW_OPEN2
+    drop-first: true
+    enabled: true
+    labels:
+    url: jdbc:mysql://127.0.0.1:3306/DW_OPEN2?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    user: root
+    password: ENC(CmsCudm4T8D4eObaXMivwA==)
+
+  redis:
+    host: 172.26.59.53
+    password: XqiLT27C1qBv
+    port: 6379
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+app:
+  bjam:
+    oauth2:
+      clientid: opendatabdp
+      entityid: opendatabdp
+      responsetype: code
+      homepage: http://localhost:8081
+      clientsecret: d6ed06468a314275bffe3a7cc8da290b
+      idpheadurl: https://loginuat.countrygarden.com.cn:8443/idp/oauth2
+      idpglourl: https://loginuat.countrygarden.com.cn:8443/idp/profile/SAML2/Redirect/GLO?redirectToLogin=true
+    unauthenticationurl: /,/index.html,/error,/login,/dw/logout,/base,/getUserInfo,/resources/**,/swagger-resources/**,/webjars/**,/v2/**,/swagger-ui.html/**
+    unauthorizationurl: /,/index.html,/error,/login,/dw/logout,/base,/getUserInfo,/resources/**,/swagger-resources/**,/webjars/**,/v2/**,/swagger-ui.html/**,/dw/rest/task/query/alarm
+open:
+  api:
+    sign:
+      timeout:
+        second: 300000
+    event:
+      center:
+        address: http://event.wakedata.com
+      username: test
+      password: 123456
+
+fr:
+  open_rest:
+    host: https://10.10.169.171/webroot/decision
+    secret: 123456789
+  data:
+    crystal:
+      directory: 510c2ea6-5871-41e0-8939-ff620763b5b2
+    dashboard:
+      directory: decision-directory-root
+    asset:
+      group:
+        name: 行业数据
+    enable: false
+    url: https://dt.countrygarden.com.cn/view/report.do?reportId=cb53898180cd4cfabac0db70cb3b93b6
+    user: penghe
+
+#园宝公众号
+yuanbao:
+  pub: XT-732cd009-92ab-4ba6-95ce-86fc2f750d7d
+  pubKey: fa871aa8b1aaec73630d2aa4d21e527c
+  eid: 172218790
+  url: http://open-api.bgy.com.cn/env-101/por-2302/newyb/im/pubacc/pubsend
+  apiKey: oZi7Weh10pMWPeM8lOMxfUhuL32mDzib
+  #crytalUrl: cloudhub://domain?url=https://dt.bgy.com.cn/report.html?isNavHidden=true&webUrl=https://loginuat.countrygarden.com.cn:8443/idp/themes/error/defpage-403.html?systemName=BIP%26bipName=王雄珀【wangxiongpo】%26telephone=18666933891%26reason=不支持PC端访问，请到移动端操作
+  #crytalUrl: cloudhub://domain?url=https://dttest.countrygarden.com.cn:8080/indicator.html?isNavHidden=true&webUrl=https://loginuat.countrygarden.com.cn:8443/idp/themes/error/defpage-403.html?systemName=BIP%26bipName=王雄珀【wangxiongpo】%26telephone=18666933891%26reason=不支持PC端访问，请到移动端操作
+  crytalUrl: cloudhub://domain?url=https://dt.bgy.com.cn/report.html?isNavHidden=true&webUrl=https://loginuat.countrygarden.com.cn:8443/idp/themes/error/defpage-403.html?systemName=BIP%26bipName=王雄珀【wangxiongpo】%26telephone=18666933891%26reason=不支持PC端访问，请到移动端操作
+  reportName: 项目日报,报表1
+#最大连接数
+http:
+  maxTotal: 100
+  #并发数
+  defaultMaxPerRoute: 20
+  #创建连接的最长时间
+  connectTimeout: 1000
+  #从连接池中获取到连接的最长时间
+  connectionRequestTimeout: 500
+  #数据传输的最长时间
+  socketTimeout: 10000
+  #提交请求前测试连接是否可用
+  staleConnectionCheckEnabled: true
+
+auth:
+  admin:
+    userId: penghe
+server:
+  port: 8081
+k2:
+  inst-id: D38S00221
+  process-code: CGP120074
+  source-id: D38S00221
+  app-key: bgy_bdp01
+  secret-key: 2c3f16233c744d4cbf48e039ea1c93b6
+  start-process2: http://soauat.bgy.com.cn:8011/BpmSB/Bbpm/Startprocess2/ProxyServices/BbpmStartprocess2ExecuteRestProxy
+  approval-person: zhengguiqing
+permit:
+  url: http://10.10.199.67:8080
+  pid: 157
+
+kafka:
+  bootstrapServers: 172.26.61.105:9092
+mq:
+  bootstrapServers: 172.26.61.105:9876
+local:
+  server:
+    path: localhost:8081/dw/open/api/
+
+
+event:
+  receive:
+    callApiAppid: d4bcf91a4a1847cd9b04e361f8eca369
+    kafkaGroupId: kafkaGroupIdReceiveEvent
+    mqGroupId: mqGroupIdReceiveEvent
+
+xxl:
+  job:
+    appId: 6f1fb22ef00b4846ba3d3831d01ee605  #定时任务应用appId
+    accessToken:
+    admin:
+      addresses: http://127.0.0.1:8080/xxl-job-admin
+    executor:
+      address:
+      appname: dw-open-xxl-job
+      ip:
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30
+      port: 9990

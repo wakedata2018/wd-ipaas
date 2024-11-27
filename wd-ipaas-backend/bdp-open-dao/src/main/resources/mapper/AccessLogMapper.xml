@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.log.AccessLogMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.log.AccessLogPo">
+        <id column="ID" property="id"/>
+        <result column="data_access_app_id" property="appId"/>
+        <result column="SEQ_NO" property="seqNo"/>
+        <result column="data_asset_api_id" property="dataAssetApiId"/>
+        <result column="VERSION" property="version"/>
+        <result column="RESULT_CODE" property="resultCode"/>
+        <result column="RESULT_ROW" property="resultRow"/>
+        <result column="ELAPSED" property="elapsed"/>
+        <result column="IP" property="ip"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+        <result column="LESSEE_ID" property="lesseeId"/>
+    </resultMap>
+    <resultMap id="AppAccessMap" type="com.wakedata.dw.open.model.domain.AppAccessDo">
+        <id column="ID" property="id"/>
+        <result column="DATA_ACCESS_APP_ID" property="accessAppId"/>
+        <result column="PRIMARY_NAME" property="primaryName"/>
+        <result column="SECONDARY_NAME" property="secondaryName"/>
+        <result column="RESULT_VALUE" property="resultValue"/>
+        <result column="CREATE_TIME" property="time"/>
+        <result column="DATA_ACCESS_APP_NAME" property="appName"/>
+        <result column="result_description" property="resultDescription"/>
+    </resultMap>
+    <select id="countAll" resultType="java.lang.Integer">
+        SELECT
+            SUM( RESULT_ROW )
+        FROM
+            (
+            SELECT
+                SUM( RESULT ) AS RESULT_ROW
+            FROM
+                DW_OPEN_ACCESS_STATISTICS
+            WHERE
+                STAT_TYPE = 51
+            AND LESSEE_ID = #{lesseeId}
+            UNION ALL
+            SELECT
+                COUNT(*) AS RESULT_ROW
+            FROM
+                DW_OPEN_ACCESS_LOG
+            WHERE
+                CREATE_TIME >= #{today}
+                AND LESSEE_ID = #{lesseeId}
+            ) a
+    </select>
+    <select id="countAllToday" resultType="java.lang.Integer">
+        SELECT
+                COUNT(*) AS RESULT_ROW
+            FROM
+                DW_OPEN_ACCESS_LOG
+            WHERE
+                CREATE_TIME >= #{today}
+                <if test="lesseeId != null">
+                    AND LESSEE_ID = #{lesseeId}
+                </if>
+
+    </select>
+    <select id="countAllError" resultType="java.lang.Integer">
+        SELECT IFNULL(SUM(RESULT_ROW), 0) AS COUNT
+        FROM (
+                 SELECT RESULT_CODE AS RECORD_DATA,
+                        COUNT(ID)   AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt; #{start}
+                   AND CREATE_TIME &lt;= #{end}
+                   AND RESULT_CODE != 200
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RESULT_CODE
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 31
+                 AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 32
+                   AND DATA_TIME >= STR_TO_DATE(
+                         DATE_FORMAT(NOW(), '%Y-%M-%D'),
+                         '%Y-%M-%D %H:%I:%S'
+                     )
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+             ) AS T1
+    </select>
+
+    <select id="countErrorToday" resultType="java.lang.Integer">
+         SELECT
+                COUNT(ID)   AS RESULT_ROW
+         FROM DW_OPEN_ACCESS_LOG
+         WHERE CREATE_TIME &gt;= #{todayZero}
+           AND RESULT_CODE != 200
+            <if test="lesseeId != null">
+                AND LESSEE_ID = #{lesseeId}
+            </if>
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT COUNT(ID)
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+          AND CREATE_TIME &lt;= #{end}
+    </select>
+
+    <select id="countGroupLessee" resultMap="BaseResultMap">
+        SELECT
+            COUNT( ID ) as  RESULT_ROW,
+            LESSEE_ID
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            CREATE_TIME &gt;#{start}
+        AND CREATE_TIME &lt;= #{end}
+        GROUP BY
+            LESSEE_ID
+    </select>
+
+    <select id="groupMethodCount" resultMap="BaseResultMap">
+        SELECT data_asset_api_id,
+               COUNT(ID) AS RESULT_ROW,
+               LESSEE_ID,
+               data_access_app_id
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+          AND CREATE_TIME &lt;= #{end}
+        GROUP BY data_asset_api_id,LESSEE_ID,data_access_app_id
+    </select>
+    <select id="groupAppIdCount" resultMap="BaseResultMap">
+        SELECT data_access_app_id,
+               COUNT(ID) AS RESULT_ROW,
+               LESSEE_ID
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+          AND CREATE_TIME &lt;= #{end}
+        GROUP BY data_access_app_id,LESSEE_ID
+    </select>
+    <select id="groupResultCode" resultMap="BaseResultMap">
+         SELECT RESULT_CODE,
+               COUNT(ID) AS RESULT_ROW,
+               LESSEE_ID
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+          AND CREATE_TIME &lt;= #{end}
+          AND RESULT_CODE != 200
+        GROUP BY RESULT_CODE,LESSEE_ID
+    </select>
+    <select id="groupElapsed" resultMap="BaseResultMap">
+        SELECT data_asset_api_id,
+               COUNT(ID)    AS RESULT_ROW,
+               SUM(ELAPSED) AS ELAPSED,
+               LESSEE_ID
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+          AND CREATE_TIME &lt;= #{end}
+        GROUP BY data_asset_api_id,LESSEE_ID
+    </select>
+    <select id="groupByRightRate" resultMap="BaseResultMap">
+        SELECT T1.data_asset_api_id AS data_asset_api_id,
+               NUM1            AS RESULT_ROW,
+               IFNULL(NUM2, 0) AS ELAPSED,
+               T1.LESSEE_ID
+        FROM (
+                 SELECT data_asset_api_id,
+                        COUNT(1) AS NUM1,
+                        LESSEE_ID
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt; #{start}
+                   AND CREATE_TIME &lt;= #{end}
+                 GROUP BY data_asset_api_id,LESSEE_ID
+             ) AS T1
+                 LEFT JOIN (
+            SELECT data_asset_api_id,
+                   COUNT(1) AS NUM2
+            FROM DW_OPEN_ACCESS_LOG
+            WHERE CREATE_TIME &gt; #{start}
+              AND CREATE_TIME &lt;= #{end}
+              AND RESULT_CODE = 200
+            GROUP BY data_asset_api_id
+        ) AS T2 ON T1.data_asset_api_id = T2.data_asset_api_id
+    </select>
+
+    <select id="totalGroupByAccessMethod" resultMap="AppAccessMap">
+        SELECT B.API_NAME                 AS PRIMARY_NAME,
+               B.DATA_ASSET_API_METHOD    AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT data_asset_api_id AS RECORD_DATA,
+                        COUNT(ID)    AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME >= #{today}
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY data_asset_api_id
+                 UNION ALL
+                 SELECT RECORD_ENTITY_ID,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 51
+                 AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_ENTITY_ID
+             ) AS A
+                 INNER JOIN DW_OPEN_API AS B ON A.RECORD_DATA = B.DATA_ASSET_API_ID
+        GROUP BY A.RECORD_DATA
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="totalGroupByAccessMethodWeek" resultMap="AppAccessMap">
+        SELECT
+            A.data_asset_name AS PRIMARY_NAME,
+            A.data_asset_method AS SECONDARY_NAME,
+            COUNT(*) AS RESULT_VALUE
+        FROM
+            DW_OPEN_ACCESS_LOG A
+            INNER JOIN DW_OPEN_API AS B ON A.data_asset_api_id = B.DATA_ASSET_API_ID
+        WHERE
+            A.CREATE_TIME >= #{beforeWeek}
+            <if test="lesseeId != null">
+                AND A.LESSEE_ID = #{lesseeId}
+            </if>
+        GROUP BY
+            A.data_asset_api_id
+        ORDER BY
+            RESULT_VALUE DESC
+    </select>
+
+
+    <select id="pastGroupByAccessMethod" resultMap="AppAccessMap">
+        SELECT B.API_NAME                 AS PRIMARY_NAME,
+               B.DATA_ASSET_API_METHOD    AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 11
+                   AND DATA_TIME &gt;= #{start}
+                   AND DATA_TIME &lt; #{end}
+                 GROUP BY RECORD_DATA
+             ) AS A
+                 INNER JOIN DW_OPEN_API AS B ON A.RECORD_DATA = B.DATA_ASSET_API_ID
+        GROUP BY A.RECORD_DATA
+        ORDER BY RESULT_VALUE DESC
+    </select>
+    <select id="totalGroupByAccessApp" resultMap="AppAccessMap">
+        SELECT B.DATA_ACCESS_APP_NAME     AS PRIMARY_NAME,
+               B.DATA_ACCESS_DESCRIPTION  AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT data_access_app_id AS RECORD_DATA,
+                        COUNT(ID)     AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt; #{start}
+                   AND CREATE_TIME &lt;= #{end}
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 21
+                 AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 22
+                   AND DATA_TIME >= str_to_date(
+                         DATE_FORMAT(NOW(), '%Y-%m-%d'),
+                         '%Y-%m-%d %H:%i:%s'
+                     )
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+             ) AS A
+            INNER JOIN DW_OPEN_APP_ACCESS AS B ON A.RECORD_DATA = B.DATA_ACCESS_APP_ID
+        GROUP BY A.RECORD_DATA
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="totalGroupByAccessAppWeek" resultMap="AppAccessMap">
+        SELECT
+            B.DATA_ACCESS_APP_NAME AS PRIMARY_NAME,
+            B.DATA_ACCESS_DESCRIPTION AS SECONDARY_NAME,
+            count(*) AS RESULT_VALUE
+        FROM
+            DW_OPEN_ACCESS_LOG A
+            INNER JOIN DW_OPEN_APP_ACCESS AS B ON A.data_access_app_id = B.DATA_ACCESS_APP_ID
+        WHERE
+            A.CREATE_TIME >= #{beforeWeekDay}
+            <if test="lesseeId != null">
+                AND A.LESSEE_ID = #{lesseeId}
+            </if>
+        GROUP BY
+            A.data_access_app_id
+        ORDER BY
+            RESULT_VALUE DESC
+    </select>
+
+    <select id="totalGroupByResultCodeMonth" resultMap="AppAccessMap">
+        SELECT RESULT_CODE AS ID,result_description,
+                COUNT(ID)  AS RESULT_VALUE
+         FROM DW_OPEN_ACCESS_LOG
+         WHERE CREATE_TIME >= #{beforeMonthDay}
+           AND RESULT_CODE!=200
+           <if test="lesseeId != null">
+                AND LESSEE_ID = #{lesseeId}
+           </if>
+         GROUP BY RESULT_CODE
+    </select>
+
+
+    <select id="myApi" resultMap="AppAccessMap">
+        SELECT C.DATA_ASSET_API_ID AS ID,
+               D.DATA_ACCESS_APP_NAME,
+               A.data_access_app_id AS DATA_ACCESS_APP_ID,
+               C.API_NAME                 AS PRIMARY_NAME,
+               C.DATA_ASSET_API_METHOD    AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM
+        (
+             SELECT data_asset_api_id AS RECORD_DATA, COUNT(ID)    AS RESULT_ROW, data_access_app_id
+             FROM DW_OPEN_ACCESS_LOG
+             WHERE CREATE_TIME &gt; #{start} AND CREATE_TIME &lt;= #{end}
+             GROUP BY data_asset_api_id, data_access_app_id
+             UNION ALL
+             SELECT RECORD_DATA, SUM(RESULT) AS RESULT_ROW, data_access_app_id
+             FROM DW_OPEN_ACCESS_STATISTICS
+             WHERE STAT_TYPE = 11
+             GROUP BY RECORD_DATA, data_access_app_id
+             UNION ALL
+             SELECT RECORD_DATA, SUM(RESULT) AS RESULT_ROW, data_access_app_id
+             FROM DW_OPEN_ACCESS_STATISTICS
+             WHERE STAT_TYPE = 12
+             AND DATA_TIME >= str_to_date(DATE_FORMAT(NOW(), '%Y-%m-%d'), '%Y-%m-%d %H:%i:%s')
+             GROUP BY RECORD_DATA, data_access_app_id
+        ) AS A
+        LEFT JOIN DW_OPEN_API AS C ON A.RECORD_DATA = C.DATA_ASSET_API_ID
+        LEFT JOIN DW_OPEN_APP_ACCESS D ON A.data_access_app_id = D.DATA_ACCESS_APP_ID
+        WHERE C.LESSEE_ID = #{lesseeId}
+            AND D.STATUS = 1
+        <if test="dataAssetApiId">
+            AND C.DATA_ASSET_API_ID=#{dataAssetApiId}
+        </if>
+        <if test="accessAppId != null">
+            AND D.DATA_ACCESS_APP_ID=#{accessAppId}
+        </if>
+        <if test="keyword != null">
+            AND C.API_NAME like concat('%',#{keyword},'%')
+        </if>
+        <if test="username != null">
+            AND D.IN_CHARGE = #{username}
+        </if>
+        GROUP BY A.RECORD_DATA, DATA_ACCESS_APP_ID
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+
+
+    <select id="pastGroupByAccessApp" resultMap="AppAccessMap">
+        SELECT B.DATA_ACCESS_APP_NAME     AS PRIMARY_NAME,
+               B.DATA_ACCESS_DESCRIPTION  AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 21
+                   and DATA_TIME &gt;= #{start}
+                   AND DATA_TIME &lt;= #{end}
+                 GROUP BY RECORD_DATA
+             ) AS A
+                 INNER JOIN DW_OPEN_APP_ACCESS AS B ON A.RECORD_DATA = B.DATA_ACCESS_APP_ID
+        GROUP BY A.RECORD_DATA
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="totalGroupByApiGroup" resultMap="AppAccessMap">
+        SELECT C.GROUP_NAME               AS PRIMARY_NAME,
+               C.GROUP_PATH               AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT data_asset_api_id AS RECORD_DATA,
+                        COUNT(ID)    AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt; #{start}
+                   AND CREATE_TIME &lt;= #{end}
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 11
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 12
+                   AND DATA_TIME >= str_to_date(
+                         DATE_FORMAT(NOW(), '%Y-%m-%d'),
+                         '%Y-%m-%d %H:%i:%s'
+                     )
+                 GROUP BY RECORD_DATA
+             ) AS A
+                 RIGHT JOIN DW_OPEN_API AS B ON A.RECORD_DATA = B.DATA_ASSET_API_ID
+                 RIGHT JOIN DW_OPEN_API_GROUP AS C ON B.API_GROUP_ID = C.ID
+        WHERE B.DATA_ASSET_PUBLISH_STATUS = 1
+        GROUP BY GROUP_NAME
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="pastGroupByApiGroupAndToday" resultMap="AppAccessMap">
+        SELECT C.id                       AS id,
+               C.GROUP_NAME               AS PRIMARY_NAME,
+               C.GROUP_PATH               AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+        SELECT
+        a.RECORD_DATA,
+        SUM( RESULT_ROW ) AS RESULT_ROW
+        FROM
+        (
+        SELECT
+            RECORD_DATA,
+            SUM( RESULT ) AS RESULT_ROW
+        FROM
+            DW_OPEN_ACCESS_STATISTICS
+        WHERE
+            STAT_TYPE = 11
+        AND DATA_TIME &gt;= #{start}
+        AND DATA_TIME &lt;=  #{end}
+        <if test="lesseeId != null">
+            AND LESSEE_ID = #{lesseeId}
+        </if>
+        GROUP BY
+            RECORD_DATA
+        UNION ALL
+        SELECT
+            data_asset_api_id AS RECORD_DATA,
+            count(*) AS RESULT_ROW
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            CREATE_TIME > #{today}
+            <if test="lesseeId != null">
+                AND LESSEE_ID = #{lesseeId}
+            </if>
+        GROUP BY
+            data_asset_api_id
+            ) a
+        GROUP BY
+            a.RECORD_DATA
+             ) AS A
+                 INNER JOIN DW_OPEN_API AS B ON A.RECORD_DATA = B.DATA_ASSET_API_ID
+                 INNER JOIN DW_OPEN_API_GROUP AS C ON B.API_GROUP_ID = C.ID
+        WHERE B.DATA_ASSET_PUBLISH_STATUS = 1
+        GROUP BY GROUP_NAME
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="pastGroupByApiGroup" resultMap="AppAccessMap">
+        SELECT C.id                       AS id,
+               C.GROUP_NAME               AS PRIMARY_NAME,
+               C.GROUP_PATH               AS SECONDARY_NAME,
+               IFNULL(SUM(RESULT_ROW), 0) AS RESULT_VALUE
+        FROM (
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 11
+                   and DATA_TIME &gt;= #{start}
+                   AND DATA_TIME &lt; #{end}
+                   <if test="lesseeId != null">
+                        AND LESSEE_ID = #{lesseeId}
+                   </if>
+                 GROUP BY RECORD_DATA
+             ) AS A
+                 INNER JOIN DW_OPEN_API AS B ON A.RECORD_DATA = B.DATA_ASSET_API_ID
+                 INNER JOIN DW_OPEN_API_GROUP AS C ON B.API_GROUP_ID = C.ID
+        WHERE B.DATA_ASSET_PUBLISH_STATUS = 1
+        GROUP BY GROUP_NAME
+        ORDER BY RESULT_VALUE DESC
+    </select>
+
+    <select id="totalGroupByResultCode" resultMap="AppAccessMap">
+        SELECT T1.RECORD_DATA     AS ID,
+               SUM(T1.RESULT_ROW) AS RESULT_VALUE
+        FROM (
+                 SELECT RESULT_CODE AS RECORD_DATA,
+                        COUNT(ID)   AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME >= #{today}
+                   AND RESULT_CODE!=200
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+                 UNION ALL
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 31
+                 AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_DATA
+             ) AS T1
+        GROUP BY ID
+    </select>
+
+    <select id="pastGroupByResultCode" resultMap="AppAccessMap">
+        SELECT T1.RECORD_DATA     AS ID,
+               SUM(T1.RESULT_ROW) AS RESULT_VALUE
+        FROM (
+                 SELECT RECORD_DATA,
+                        SUM(RESULT) AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 31
+                   AND DATA_TIME &gt;= #{start}
+                   AND DATA_TIME &lt; #{end}
+                 GROUP BY RECORD_DATA
+             ) AS T1
+        GROUP BY ID
+    </select>
+    <select id="totalGroupByElapsed" resultMap="AppAccessMap">
+        SELECT T2.API_NAME                                               AS PRIMARY_NAME,
+               ROUND(SUM(T1.RECORD_DATA) / SUM(T1.RESULT_ROW) / 1000, 2) AS SECONDARY_NAME
+        FROM (
+                 SELECT data_asset_api_id AS RECORD_ENTITY_ID,
+                        SUM(ELAPSED) AS RECORD_DATA,
+                        COUNT(ID)    AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt; #{start}
+                   AND CREATE_TIME &lt;= #{end}
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_ENTITY_ID
+                 UNION ALL
+                 SELECT RECORD_ENTITY_ID,
+                        SUM(RECORD_DATA) AS RECORD_DATA,
+                        SUM(RESULT)      AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 41
+                 AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_ENTITY_ID
+                 UNION ALL
+                 SELECT RECORD_ENTITY_ID,
+                        SUM(RECORD_DATA) AS RECORD_DATA,
+                        SUM(RESULT)      AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 42
+                   AND DATA_TIME >= str_to_date(
+                         DATE_FORMAT(NOW(), '%Y-%m-%d'),
+                         '%Y-%m-%d %H:%i:%s'
+                     )
+                   AND LESSEE_ID = #{lesseeId}
+                 GROUP BY RECORD_ENTITY_ID
+             ) AS T1
+                 LEFT JOIN DW_OPEN_API AS T2 ON T1.RECORD_ENTITY_ID = T2.DATA_ASSET_API_ID
+             WHERE T2.API_NAME is not null
+        GROUP BY RECORD_ENTITY_ID
+        ORDER BY SECONDARY_NAME DESC
+    </select>
+
+    <select id="totalGroupByElapsedWeek" resultMap="AppAccessMap">
+        SELECT T2.API_NAME                                               AS PRIMARY_NAME,
+               ROUND(SUM(T1.RECORD_DATA) / SUM(T1.RESULT_ROW), 0) AS SECONDARY_NAME
+        FROM (
+                 SELECT data_asset_api_id AS RECORD_ENTITY_ID,
+                        SUM(ELAPSED) AS RECORD_DATA,
+                        COUNT(ID)    AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_LOG
+                 WHERE CREATE_TIME &gt;= #{beforeWeekDay}
+                    <if test="lesseeId != null">
+                        AND LESSEE_ID = #{lesseeId}
+                    </if>
+                 GROUP BY RECORD_ENTITY_ID
+             ) AS T1
+                 LEFT JOIN DW_OPEN_API AS T2 ON T1.RECORD_ENTITY_ID = T2.DATA_ASSET_API_ID
+             WHERE T2.API_NAME is not null
+        GROUP BY RECORD_ENTITY_ID
+        ORDER BY SECONDARY_NAME DESC
+    </select>
+
+    <select id="pastGroupByElapsed" resultMap="AppAccessMap">
+        SELECT T2.API_NAME                                               AS PRIMARY_NAME,
+               ROUND(SUM(T1.RECORD_DATA) / SUM(T1.RESULT_ROW) / 1000, 2) AS SECONDARY_NAME
+        FROM (
+                 SELECT RECORD_ENTITY_ID,
+                        SUM(RECORD_DATA) AS RECORD_DATA,
+                        SUM(RESULT)      AS RESULT_ROW
+                 FROM DW_OPEN_ACCESS_STATISTICS
+                 WHERE STAT_TYPE = 41
+                   AND DATA_TIME &gt;= #{start}
+                   AND DATA_TIME &lt; #{end}
+                 GROUP BY RECORD_ENTITY_ID
+             ) AS T1
+                 LEFT JOIN DW_OPEN_API AS T2 ON T1.RECORD_ENTITY_ID = T2.DATA_ASSET_API_ID
+        GROUP BY RECORD_ENTITY_ID
+        ORDER BY SECONDARY_NAME DESC
+    </select>
+
+    <select id="totalGroupByRightRate" resultMap="AppAccessMap">
+        SELECT T2.API_NAME AS PRIMARY_NAME,
+        T2.DATA_ASSET_API_METHOD AS SECONDARY_NAME,
+        SUM(T1.RESULT_ROW) AS ID,
+        SUM(T1.RESULT_ROW)-SUM(T1.RECORD_DATA) AS RESULT_VALUE
+        FROM (
+        SELECT T1.data_asset_api_id AS RECORD_ENTITY_ID,
+        ELAPSED AS RECORD_DATA,
+        RESULT_ROW
+        FROM (
+        SELECT T1.data_asset_api_id AS data_asset_api_id,
+        NUM1 AS RESULT_ROW,
+        IFNULL(NUM2, 0) AS ELAPSED
+        FROM (
+        SELECT data_asset_api_id,
+        COUNT(1) AS NUM1
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+        AND CREATE_TIME &lt;= #{end}
+        <if test="dataAssetId">
+            AND data_asset_api_id=#{dataAssetId}
+        </if>
+        GROUP BY data_asset_api_id
+        ) AS T1
+        LEFT JOIN (
+        SELECT data_asset_api_id,
+        COUNT(1) AS NUM2
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &gt; #{start}
+        AND CREATE_TIME &lt;= #{end}
+        AND RESULT_CODE = 200
+        <if test="dataAssetId">
+            AND data_asset_api_id=#{dataAssetId}
+        </if>
+        GROUP BY data_asset_api_id
+        ) AS T2 ON T1.data_asset_api_id = T2.data_asset_api_id
+        ) AS T1
+        UNION ALL
+        SELECT RECORD_ENTITY_ID,
+        SUM(RECORD_DATA) AS RECORD_DATA,
+        SUM(RESULT) AS RESULT_ROW
+        FROM DW_OPEN_ACCESS_STATISTICS
+        WHERE STAT_TYPE = 51
+        <if test="dataAssetId">
+            AND RECORD_ENTITY_ID=#{dataAssetId}
+        </if>
+        GROUP BY RECORD_ENTITY_ID
+        UNION ALL
+        SELECT RECORD_ENTITY_ID,
+        SUM(RECORD_DATA) AS RECORD_DATA,
+        SUM(RESULT) AS RESULT_ROW
+        FROM DW_OPEN_ACCESS_STATISTICS
+        WHERE STAT_TYPE = 52
+        <if test="dataAssetId">
+            AND RECORD_ENTITY_ID=#{dataAssetId}
+        </if>
+        AND DATA_TIME >= str_to_date(
+        DATE_FORMAT(NOW(), '%Y-%m-%d'),
+        '%Y-%m-%d %H:%i:%s'
+        )
+        GROUP BY RECORD_ENTITY_ID
+        ) AS T1
+        LEFT JOIN DW_OPEN_API AS T2 ON T1.RECORD_ENTITY_ID = T2.DATA_ASSET_API_ID
+        WHERE T2.DATA_ASSET_PUBLISH_STATUS = 1
+        GROUP BY T1.RECORD_ENTITY_ID
+    </select>
+
+    <select id="getMinDate" resultType="java.util.Date">
+        SELECT MIN(CREATE_TIME)
+        FROM DW_OPEN_ACCESS_LOG
+    </select>
+
+    <select id="whoCalls" resultMap="AppAccessMap">
+        SELECT
+        T2.DATA_ACCESS_APP_NAME AS PRIMARY_NAME,
+        T2.DATA_ACCESS_APP_NAME AS SECONDARY_NAME,
+        T1.data_asset_api_id AS data_asset_api_id,
+        RESULT_VALUE
+        FROM
+        (
+        SELECT
+        data_access_app_id,
+        data_asset_api_id,
+        COUNT(*) AS RESULT_VALUE
+        FROM
+        DW_OPEN_ACCESS_LOG
+        WHERE
+        CREATE_TIME > #{createTime}
+        <if test="accessMethod != null">
+            and data_asset_api_id=#{accessMethod}
+        </if>
+        GROUP BY
+        data_access_app_id
+        ) AS T1
+        INNER JOIN DW_OPEN_APP_ACCESS AS T2 ON T1.data_access_app_id = T2.DATA_ACCESS_KEY
+    </select>
+
+    <select id="allError" resultType="java.lang.Integer">
+        SELECT COUNT(ID)
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE RESULT_CODE != 200
+    </select>
+
+    <select id="groupByErrorCode" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        DW_OPEN_ACCESS_LOG
+        WHERE
+        <if test="createTime != null">
+            CREATE_TIME &gt; #{createTime} AND
+        </if>
+        RESULT_CODE != 200
+        GROUP BY
+        RESULT_CODE
+    </select>
+
+    <select id="groupByTimeUnit" resultMap="AppAccessMap">
+        SELECT
+        T2.API_NAME AS PRIMARY_NAME,
+        T2.API_NAME AS SECONDARY_NAME,
+        RESULT_VALUE,
+        T1.TIME_UNIT AS CREATE_TIME
+        FROM
+        DW_OPEN_API AS T2 INNER JOIN
+        (
+        SELECT
+        data_asset_api_id,DATE_FORMAT(create_time ,#{format}) AS TIME_UNIT, COUNT(*) AS RESULT_VALUE
+        FROM
+        DW_OPEN_ACCESS_LOG
+        WHERE
+        CREATE_TIME >
+        <if test="type == 'MONTH'">
+            DATE_SUB(NOW(),INTERVAL #{num} MONTH)
+        </if>
+        <if test="type == 'DAY'">
+            DATE_SUB(NOW(),INTERVAL #{num} DAY)
+        </if>
+        <if test="type == 'YEAR'">
+            DATE_SUB(NOW(),INTERVAL #{num} YEAR)
+        </if>
+        <if test="type == 'HOUR'">
+            DATE_SUB(NOW(),INTERVAL #{num} HOUR)
+        </if>
+        <if test="type == 'MINUTE'">
+            DATE_SUB(NOW(),INTERVAL #{num} MINUTE)
+        </if>
+        <if test="type == 'WEEK'">
+            DATE_SUB(NOW(),INTERVAL #{num} WEEK)
+        </if>
+        <if test="accessMethod != null">
+            AND data_asset_api_id=#{accessMethod}
+        </if>
+        <if test="accessAppId != null">
+            AND data_access_app_id =(SELECT DATA_ACCESS_KEY FROM DW_OPEN_APP_ACCESS WHERE DATA_ACCESS_APP_ID
+            =#{accessAppId})
+        </if>
+        GROUP BY TIME_UNIT
+        ) AS T1
+        ON T1.data_asset_api_id = T2.DATA_ASSET_API_METHOD
+        WHERE T2.DATA_ASSET_PUBLISH_STATUS=1 order by CREATE_TIME
+    </select>
+
+    <delete id="cleanUp">
+        DELETE
+        FROM DW_OPEN_ACCESS_LOG
+        WHERE CREATE_TIME &lt; DATE_SUB(NOW(), INTERVAL 90 DAY)
+    </delete>
+
+
+    <select id="apiError" resultType="com.wakedata.dw.open.model.domain.AppAccessDo">
+        SELECT T2.data_asset_name AS primaryName,
+        DATE_FORMAT(T2.CREATE_TIME , '%Y-%m-%d %H:%i:%s') AS time,
+        T2.RESULT_CODE AS resultValue,
+        T2.result_description AS resultDescription,
+        T2.data_asset_group AS groupName,
+        T2.data_asset_method AS secondaryName,
+        T2.id as id,
+        DATE_FORMAT(T2.UPDATE_TIME, '%Y-%m-%d %H:%i:%s') AS updateTime,
+        IFNULL(T2.data_access_name,'已删除') as appName,
+        IFNULL(T4.data_access_key, '已删除的应用appKey') as appKey
+        FROM (
+        SELECT API_NAME,
+        DATA_ASSET_API_ID,
+				API_GROUP_ID,
+				DATA_ASSET_API_METHOD
+        FROM DW_OPEN_API
+        WHERE
+            LESSEE_ID = #{query.lesseeId}
+        <if test="query.assetApiId != null">
+            AND DATA_ASSET_API_ID = #{query.assetApiId}
+        </if>
+        ) AS T1
+        INNER JOIN DW_OPEN_ACCESS_LOG AS T2 ON T1.DATA_ASSET_API_ID = T2.data_asset_api_id
+				INNER JOIN DW_OPEN_API_GROUP T3 ON T1.API_GROUP_ID = T3.ID
+				LEFT JOIN DW_OPEN_APP_ACCESS T4 ON T4.DATA_ACCESS_APP_ID  = T2.data_access_app_id
+        WHERE T2.RESULT_CODE!=200
+        <if test="query.id != null">
+            AND T2.id = #{query.id}
+        </if>
+        <if test="query.apiName != null">
+            AND  (T2.data_asset_name like concat('%',#{query.apiName},'%') or T2.data_asset_method like concat('%',#{query.apiName},'%'))
+        </if>
+        <if test="query.startTime != null">
+            AND T2.CREATE_TIME &gt;= #{query.startTime}
+        </if>
+        <if test="query.endTime != null">
+            AND T2.CREATE_TIME &lt;= #{query.endTime}
+        </if>
+        ORDER BY T2.CREATE_TIME DESC
+    </select>
+    <select id="totalGroupByRightRateBefore" resultType="com.wakedata.dw.open.model.domain.AppAccessDo">
+        SELECT
+        a.DATA_ASSET_API_ID AS id,
+        a.API_NAME AS primaryName,
+        a.DATA_ASSET_API_METHOD AS secondaryName,
+        g.GROUP_NAME AS groupName,
+        IFNULL(b.resultNum,0) AS resultValue,
+        IFNULL(b.faildNum,0) AS errorValue,
+        IFNULL(c.takeTime,0) as takeTime,
+        IFNULL(c.times,0) as times
+        FROM
+        DW_OPEN_API a
+        LEFT JOIN (
+        SELECT
+        RECORD_ENTITY_ID,
+        sum( RECORD_DATA ) AS resultNum,
+        sum( RESULT )- sum( RECORD_DATA ) AS faildNum
+        FROM
+        DW_OPEN_ACCESS_STATISTICS
+        WHERE
+            STAT_TYPE = 51
+        <if test="query.startTime != null">
+            AND DATA_TIME &gt;= #{query.startTime}
+        </if>
+        <if test="query.endTime != null">
+            AND DATA_TIME &lt;= #{query.endTime}
+        </if>
+        <if test="query.assetApiId != null">
+            AND RECORD_ENTITY_ID = #{query.assetApiId}
+        </if>
+        GROUP BY
+        RECORD_ENTITY_ID
+        ) b ON a.DATA_ASSET_API_ID = b.RECORD_ENTITY_ID
+        LEFT JOIN DW_OPEN_API_GROUP g ON a.API_GROUP_ID = g.id
+        LEFT JOIN ( SELECT SUM(RECORD_DATA) AS takeTime ,SUM(RESULT) AS times, RECORD_ENTITY_ID FROM DW_OPEN_ACCESS_STATISTICS WHERE STAT_TYPE = 41
+        <if test="query.startTime != null">
+            AND DATA_TIME &gt;= #{query.startTime}
+        </if>
+        <if test="query.endTime != null">
+            AND DATA_TIME &lt;= #{query.endTime}
+        </if>
+        GROUP BY RECORD_ENTITY_ID ) c
+        ON a.DATA_ASSET_API_ID = c.RECORD_ENTITY_ID
+        WHERE a.LESSEE_ID = #{query.lesseeId}
+        <if test="query.assetApiId != null">
+            AND  a.DATA_ASSET_API_ID = #{query.assetApiId}
+        </if>
+        <if test="query.apiName != null">
+            AND a.api_name like concat('%',#{query.apiName},'%')
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <select id="totalGroupByRightRateToday" resultType="com.wakedata.dw.open.model.domain.AppAccessDo">
+        SELECT
+            a.data_asset_api_id as id,
+            a.API_NAME as primaryName,
+            a.DATA_ASSET_API_METHOD as secondaryName,
+            g.GROUP_NAME as  groupName,
+            sum(
+            IF
+            ( b.RESULT_CODE = 200, 1, 0 )) AS resultValue,
+            sum(
+            IF
+            ( b.RESULT_CODE != 200, 1, 0 )) AS errorValue,
+            IFNULL(sum(b.ELAPSED),0) as takeTime,
+            count(b.data_asset_api_id) as times
+        FROM
+            DW_OPEN_API a
+            LEFT JOIN (
+            SELECT
+                *
+            FROM
+                DW_OPEN_ACCESS_LOG
+            WHERE
+            CREATE_TIME >= DATE_FORMAT( NOW(), '%Y-%m-%d 00:00:00' )
+        ) b ON a.data_asset_api_id = b.data_asset_api_id
+        LEFT JOIN DW_OPEN_API_GROUP g on a.API_GROUP_ID = g.id
+        WHERE a.LESSEE_ID = #{query.lesseeId}
+        <if test="query.assetApiId != null">
+            AND a.data_asset_api_id = #{query.assetApiId}
+        </if>
+        <if test="query.apiName != null">
+            AND a.api_name like concat('%',#{query.apiName},'%')
+        </if>
+        GROUP BY
+            a.data_asset_api_id,
+            a.API_NAME,
+            a.DATA_ASSET_API_METHOD
+        order by a.create_time desc
+    </select>
+
+    <select id="appInvokeInfo" resultType="com.wakedata.dw.open.model.domain.AppInvokeDo">
+        SELECT
+            b.DATA_ACCESS_APP_ID as appId,
+            a.data_access_name as appName,
+            a.data_asset_group as apiGroup,
+            a.data_asset_name as apiName,
+            a.CREATE_TIME as apiInvokeTime,
+            ROUND(a.ELAPSED/1000,2) as takeTime,
+            a.id,a.ip,
+        CASE
+                a.RESULT_CODE
+                WHEN 200 THEN
+                1 ELSE 0
+        END AS status
+        FROM
+            DW_OPEN_ACCESS_LOG a
+            INNER JOIN DW_OPEN_APP_ACCESS b ON a.data_access_app_id = b.DATA_ACCESS_APP_ID
+            LEFT JOIN DW_OPEN_API c ON a.data_asset_api_id = c.DATA_ASSET_API_ID
+            LEFT JOIN DW_OPEN_API_GROUP d ON c.API_GROUP_ID = d.ID
+        WHERE
+            b.LESSEE_ID = #{query.lesseeId}
+        <if test="query.appId != null">
+            AND b.DATA_ACCESS_APP_ID = #{query.appId}
+        </if>
+        <if test="query.startTime != null">
+            AND a.CREATE_TIME &gt;= #{query.startTime}
+        </if>
+        <if test="query.endTime != null">
+            AND a.CREATE_TIME &lt;= #{query.endTime}
+        </if>
+        <if test="query.appName != null">
+            AND a.data_access_name like concat('%',#{query.appName},'%')
+        </if>
+        <if test="query.status != null">
+            <if test="query.status">
+                AND a.RESULT_CODE = 200
+            </if>
+            <if test="query.status == false">
+                AND a.RESULT_CODE != 200
+            </if>
+        </if>
+        ORDER BY
+	        a.CREATE_TIME DESC
+    </select>
+
+    <select id="queryErrorTimes" resultType="java.lang.Integer">
+        SELECT
+            count(*)
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            RESULT_CODE != 200
+            AND CREATE_TIME >= CURDATE()
+            and data_asset_api_id = #{dataAssetApiId}
+    </select>
+
+    <select id="countDayLog" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            data_asset_api_id = #{apiId} AND CREATE_TIME >= CURDATE();
+    </select>
+
+    <select id="countMonthLog" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            data_asset_api_id = #{apiId} AND CREATE_TIME >= DATE_FORMAT( NOW(), '%Y-%m-01 00:00:00' );
+    </select>
+
+    <select id="countTotalLog" resultType="java.lang.Integer">
+        SELECT
+            COUNT(*)
+        FROM
+            DW_OPEN_ACCESS_LOG
+        WHERE
+            data_asset_api_id = #{apiId};
+    </select>
+
+    <select id="apiInvoke" resultType="com.wakedata.dw.open.model.domain.AppAccessDo">
+        SELECT T2.data_asset_name AS primaryName,
+        DATE_FORMAT(T2.CREATE_TIME , '%Y-%m-%d %H:%i:%s') AS time,
+        T2.RESULT_CODE AS resultValue,
+        T2.result_description AS resultDescription,
+        T2.data_asset_group AS groupName,
+        T2.data_asset_method AS secondaryName,
+        T2.id as id,
+        DATE_FORMAT(T2.UPDATE_TIME, '%Y-%m-%d %H:%i:%s') AS updateTime,
+        IFNULL(T2.data_access_name,'已删除') as appName,
+        IFNULL(T4.data_access_key, '已删除的应用appKey') as appKey
+        FROM (
+        SELECT API_NAME,
+        DATA_ASSET_API_ID,
+        API_GROUP_ID,
+        DATA_ASSET_API_METHOD
+        FROM DW_OPEN_API
+        WHERE
+        LESSEE_ID = #{query.lesseeId}
+        <if test="query.assetApiId != null">
+            AND DATA_ASSET_API_ID = #{query.assetApiId}
+        </if>
+        ) AS T1
+        INNER JOIN DW_OPEN_ACCESS_LOG AS T2 ON T1.DATA_ASSET_API_ID = T2.data_asset_api_id
+        INNER JOIN DW_OPEN_API_GROUP T3 ON T1.API_GROUP_ID = T3.ID
+        LEFT JOIN DW_OPEN_APP_ACCESS T4 ON T4.DATA_ACCESS_APP_ID  = T2.data_access_app_id
+        <where>
+            <if test="query.id != null">
+                AND T2.id = #{query.id}
+            </if>
+            <if test="query.apiName != null">
+                AND  (T2.data_asset_name like concat('%',#{query.apiName},'%') or T2.data_asset_method like concat('%',#{query.apiName},'%'))
+            </if>
+            <if test="query.startTime != null">
+                AND T2.CREATE_TIME &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND T2.CREATE_TIME &lt;= #{query.endTime}
+            </if>
+            <if test="query.invokeStatus != null and query.invokeStatus == 1">
+                AND T2.RESULT_CODE =200
+            </if>
+            <if test="query.invokeStatus != null and query.invokeStatus == 2">
+                AND T2.RESULT_CODE !=200
+            </if>
+        </where>
+
+        ORDER BY T2.CREATE_TIME DESC
+    </select>
+
+
+
+</mapper>

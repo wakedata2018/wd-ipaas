@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wakedata.dw.lowcode.mapper.LowCodeComponentMapper">
+
+  <select id="listByBatch" resultType="com.wakedata.dw.lowcode.model.LowCodeComponentPo">
+    SELECT
+         id,
+         app_id AS appId,
+         name,
+         title,
+        `desc`,
+         meta,
+         icon,
+         cover,
+         IFNULL(compressed_content, content) AS content,
+         create_time AS createTime,
+         update_time AS updateTime,
+         update_by AS updateBy
+    FROM dw_open_lowcode_component
+    WHERE app_id = #{appId}
+    AND name IN
+    <foreach collection="names" item="name" index="index" open="(" close=")" separator=",">
+      #{name}
+    </foreach>
+  </select>
+</mapper>
+

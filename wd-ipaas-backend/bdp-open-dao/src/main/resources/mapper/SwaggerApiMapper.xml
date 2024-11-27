@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.swagger.SwaggerApiMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.swagger.SwaggerApiDO">
+        <id column="id" property="id"/>
+        <result column="api_name" property="apiName"/>
+        <result column="api_type" property="apiType"/>
+        <result column="data_asset_api_method" property="dataAssetApiMethod"/>
+        <result column="api_description" property="apiDescription"/>
+        <result column="parse_status" property="parseStatus"/>
+        <result column="error_detail" property="errorDetail"/>
+        <result column="api_info" property="apiInfo"/>
+        <result column="api_group_id" property="apiGroupId"/>
+        <result column="swagger_id" property="swaggerId"/>
+        <result column="import_status" property="importStatus"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="json_schema" property="jsonSchema"/>
+    </resultMap>
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into dw_open_api_swagger
+            (api_name,api_type,data_asset_api_method,api_description,parse_status
+            ,error_detail,api_info,api_group_id,swagger_id,import_status
+            ,create_by,create_time,update_by,update_time,json_schema)
+        values
+        <foreach collection="swaggerApiDOList" separator="," item="item">
+            (#{item.apiName},#{item.apiType},#{item.dataAssetApiMethod},#{item.apiDescription},#{item.parseStatus}
+            ,#{item.errorDetail},#{item.apiInfo},#{item.apiGroupId},#{item.swaggerId},#{item.importStatus}
+            ,#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime},#{item.jsonSchema})
+        </foreach>
+    </insert>
+
+    <update id="updateImportStatus">
+        UPDATE dw_open_api_swagger
+        SET error_detail = #{swaggerApiDO.errorDetail}, import_status = #{swaggerApiDO.importStatus},update_by = #{swaggerApiDO.updateBy} ,UPDATE_TIME=NOW()
+        WHERE
+          id = #{swaggerApiDO.id}
+    </update>
+
+
+    <select id="selectPageList" resultMap="BaseResultMap">
+        select  id,api_name,api_type,data_asset_api_method,api_description,parse_status,
+                error_detail,api_group_id,swagger_id,import_status,create_by,create_time,update_by,update_time
+        from dw_open_api_swagger
+        <where>
+            swagger_id = #{query.swaggerId}
+            <if test="query.apiFind != null">
+                AND (api_name like CONCAT('%',#{query.apiFind},'%') or data_asset_api_method like CONCAT('%',#{query.apiFind},'%'))
+            </if>
+            <if test="query.importStatus != null and query.importStatus != -1">
+                AND import_status = #{query.importStatus}
+            </if>
+
+
+        </where>
+
+
+    </select>
+
+
+</mapper>

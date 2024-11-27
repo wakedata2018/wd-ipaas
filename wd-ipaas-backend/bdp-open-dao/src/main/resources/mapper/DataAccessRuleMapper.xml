@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.AppAccessRuleMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.api.AppAccessRulePo">
+        <result column="DATA_ACCESS_RULE_ID" property="dataAccessRuleId"/>
+        <result column="DATA_ASSET_API_ID" property="dataAssetApiId"/>
+        <result column="DATA_ACCESS_APP_ID" property="dataAccessAppId"/>
+        <result column="DATA_ASSET_FIELD_NAME" property="dataAssetFieldName"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+    </resultMap>
+
+    <sql id="TableName">
+        DW_OPEN_APP_ACCESS_RULE
+    </sql>
+
+    <sql id="Bean_Where_Clause">
+        <where>
+            <if test="dataAccessRuleId">
+                and DATA_ACCESS_RULE_ID = #{dataAccessRuleId}
+            </if>
+            <if test="dataAssetApiId">
+                and DATA_ASSET_API_ID = #{dataAssetApiId}
+            </if>
+            <if test="dataAccessAppId">
+                and DATA_ACCESS_APP_ID = #{dataAccessAppId}
+            </if>
+            <if test="dataAssetFieldName">
+                and DATA_ASSET_FIELD_NAME = #{dataAssetFieldName}
+            </if>
+            <if test="createTime">
+                and CREATE_TIME = #{createTime}
+            </if>
+            <if test="updateTime">
+                and UPDATE_TIME = #{updateTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="searchDataAppRuleSetOfApi" resultType="java.lang.String">
+        SELECT DATA_ASSET_FIELD_NAME
+        FROM <include refid="TableName" />
+        WHERE DATA_ASSET_API_ID = #{dataAssetApiId}
+        AND DATA_ACCESS_APP_ID = #{dataAccessAppId}
+    </select>
+
+    <delete id="deleteByApiAppId" >
+        DELETE  FROM  DW_OPEN_APPROVAL WHERE  DATA_ASSET_ID = #{apiId} AND ACCESS_APP_ID =#{appId}
+    </delete>
+
+    <delete id="batchDeleteByApiIds" parameterType="java.util.List">
+        DELETE  FROM  DW_OPEN_APP_ACCESS_RULE
+        WHERE  data_asset_api_id in
+        <foreach collection="dataAssetApiIds" item="dataAssetApiId" index="index" open="(" close=")" separator=",">
+            #{dataAssetApiId}
+        </foreach>
+    </delete>
+
+    <select id="searchAccessAppIdWithAuth" resultType="java.lang.Integer">
+        SELECT DISTINCT DATA_ACCESS_APP_ID
+        FROM <include refid="TableName"/>
+        WHERE DATA_ASSET_API_ID in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

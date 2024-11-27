@@ -1,0 +1,17 @@
+@header-height: 52px;
+// 除去header的屏幕高度
+@full-height: ~'calc(100vh - @{header-height})';
+@full-height-scroll: ~'calc(100vh - @{header-height} - 20px)';
+@body-backgroud: rgba(242, 244, 247, 1);
+@body-min-height: 720px;
+@body-min-width: 1280px;
+@sider-bar-width: 180px;
+@narrow-sider-bar-width: 54px;
+
+// 不换行，超长 ... 。注意设置 title 属性
+.ellipsis () {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}

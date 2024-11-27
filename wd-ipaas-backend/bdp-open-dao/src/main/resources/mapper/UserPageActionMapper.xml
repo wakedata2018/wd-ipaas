@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.UserPageActionMapper">
+
+    <delete id="cleanUp">
+        DELETE
+        FROM DW_OPEN_USER_PAGE_ACTION
+        WHERE CREATE_TIME &lt; DATE_SUB(NOW(), INTERVAL 15 DAY)
+    </delete>
+
+    <select id="queryReport" resultType="com.wakedata.dw.open.model.UserPageActionPo">
+        SELECT
+            ID AS id,
+            PAGE_RESOURCE AS pageResource,
+            PAGE_EVENT AS pageEvent,
+            ACTION_USER AS actionUser,
+            ACTION_TIME AS actionTime,
+            REQUEST_URL AS requestUrl,
+            OPERATING_RESULT AS operatingResult,
+            IP AS ip
+        FROM
+            DW_OPEN_USER_PAGE_ACTION
+        WHERE 1 = 1
+        <if test="query.actionUser != null and query.actionUser != ''">
+            AND ACTION_USER LIKE CONCAT('%',#{query.actionUser},'%')
+        </if>
+        <if test="query.startTime != null">
+            AND ACTION_TIME <![CDATA[ >= ]]> #{query.startTime}
+        </if>
+        <if test="query.endTime != null">
+            AND ACTION_TIME <![CDATA[ <= ]]> #{query.endTime}
+        </if>
+        <if test="query.pageResource != null and query.pageResource != ''">
+            AND PAGE_RESOURCE = #{query.pageResource}
+        </if>
+        ORDER BY ACTION_TIME DESC
+
+    </select>
+
+    <select id="queryMenu" resultType="java.lang.String">
+        SELECT DISTINCT(PAGE_RESOURCE) FROM DW_OPEN_USER_PAGE_ACTION;
+    </select>
+    <select id="queryAuditLogInformation" resultType="com.wakedata.dw.open.model.UserPageActionPo">
+        SELECT
+        ID AS id,
+        LESSEE_ID AS lesseeId,
+        PAGE_RESOURCE AS pageResource,
+        PAGE_EVENT AS pageEvent,
+        ACTION_USER AS actionUser,
+        ACTION_TIME AS actionTime,
+        TIME_STAMP as timeStamp,
+        REQUEST_PARAMS AS requestParams,
+        RESPONSE_PARAMS AS responseParams,
+        CREATE_TIME as createTime,
+        UPDATE_TIME as updateTime,
+        OPERATING_RESULT AS operatingResult,
+        REQUEST_URL AS requestUrl,
+        IP AS ip
+        FROM
+        DW_OPEN_USER_PAGE_ACTION
+        WHERE
+        ID = #{id}
+    </select>
+    <select id="selectUserIdentificationList" resultType="java.lang.String">
+        SELECT
+        user_identification
+        FROM dw_open_account
+        WHERE 1 = 1
+        <if test="userIdentification != null and userIdentification != ''">
+            and user_identification like concat('%',#{userIdentification},'%')
+        </if>
+    </select>
+
+</mapper>

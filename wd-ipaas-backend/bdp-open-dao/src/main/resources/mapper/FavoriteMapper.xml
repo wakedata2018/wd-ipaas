@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.FavoriteMapper">
+    <select id="myCollect">
+        SELECT T1.DATA_ASSET_API_ID,
+               T1.API_NAME,
+               T1.API_DESCRIPTION,
+               T1.UPDATE_FREQUENCY,
+               T1.RESPONSE_CONTENT_TYPE,
+               T1.UPDATE_TIME,
+               T1.API_GROUP_ID,
+               T3.GROUP_NAME,
+               T1.DATA_ASSET_API_METHOD,
+               CASE
+                   WHEN T2.ID IS NULL THEN
+                       0
+                   ELSE
+                       1
+                   END AS COLLECTED
+        FROM (
+                 SELECT ID,
+                        DATA_ASSET_API_ID
+                 FROM DW_OPEN_COLLECT
+                 WHERE USERNAME = #{username}
+             ) AS T2
+                 LEFT JOIN DW_OPEN_API AS T1 ON T2.DATA_ASSET_API_ID = T1.DATA_ASSET_API_ID
+                 LEFT JOIN DW_OPEN_API_GROUP AS T3 ON T1.API_GROUP_ID = T3.ID
+        WHERE T1.DATA_ASSET_PUBLISH_STATUS = 1
+    </select>
+
+
+</mapper>

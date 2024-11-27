@@ -1,0 +1,40 @@
+package com.wakedata.openapi.sdk;
+
+import cn.hutool.http.HttpResponse;
+import com.wakedata.openapi.sdk.accesstoken.AccessToken;
+import com.wakedata.openapi.sdk.accesstoken.AccessTokenUtil;
+import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+/**
+ * 方法调用示例
+ * @author luomeng
+ * @date 2022/8/23 19:20
+ */
+@Slf4j
+public class MainTest {
+
+    public static void main(String[] args) {
+        //应用key
+        String appKey = "${appKey}";
+        //应用密钥
+        String appSecret = "${appSecret}";
+
+        //获取token
+        AccessToken accessToken = AccessTokenUtil.getAccessToken(appKey, appSecret);
+        log.info("get accessToken ：{}",accessToken);
+
+        //api调用示例
+        OpenApiExample openApiExample = new OpenApiExample();
+        openApiExample.example1(accessToken.getAccessToken(), appSecret);
+        openApiExample.example2(accessToken.getAccessToken(),appSecret);
+        //调用api包下的封装工具类调用示例
+        //HttpResponse result = XXXApiExec.execute(accessToken.getAccessToken(),appSecret,xxxHead,xxxParam,xxxBody);
+        //获取响应头
+        //Map<String, List<String>> respHeaders = result.headers();
+        //获取响应体
+        //String respBody = result.body();
+        //log.info("example2 result-> head：{}，body :{}", respHeaders,respBody);
+
+    }
+
+}

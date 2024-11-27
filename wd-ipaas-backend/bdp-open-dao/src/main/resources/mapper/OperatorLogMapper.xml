@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.log.OperatorLogMapper">
+
+    <delete id="cleanUp">
+        DELETE
+        FROM DW_OPEN_OPERATOR_LOG
+        WHERE CREATE_TIME &lt; DATE_SUB(NOW(), INTERVAL 90 DAY)
+    </delete>
+</mapper>

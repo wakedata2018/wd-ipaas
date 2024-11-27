@@ -1,0 +1,56 @@
+@block-margin-top: 10px;
+
+.block-margin-top {
+  margin-top: @block-margin-top;
+}
+
+.canvas-list {
+  width: 480px;
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid #DCDFE6;
+  border-radius: 4px;
+  padding: 5px 10px 5px;
+  margin-top: 10px;
+
+  .canvas-list-item {
+    position: relative;
+    width: 450px;
+    // background-color:rgba(0, 0, 0, 0.1);
+    background-color: #779de9;
+    color: white;
+    border-radius: 2px;
+    margin: 3px 0 3px;
+    padding: 0px 10px 0px;
+
+    .btn-clear {
+      position: absolute;
+      cursor: pointer;
+      top: 8px;
+      right: 5px;
+    }
+  }
+}
+.split-div {
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.source-table-view{
+  background-color: #f5f7fa;
+  padding: 10px;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+
+.sub-title {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 5px 0;
+  margin-bottom: 20px;
+}
+/deep/ .el-autocomplete,
+.el-select {
+  width: 50% !important;
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.api.ApiFlowRelationMapper">
+
+    <resultMap id="HttpExternalApi" type="com.wakedata.dw.open.model.api.flow.ApiFlowRelation">
+        <id column="ID" property="id"/>
+        <result column="API_ID" property="apiId"/>
+        <result column="GRAPH_ID" property="graphId"/>
+    </resultMap>
+
+    <select id="getApiRelations" parameterType="java.lang.Integer" resultMap="HttpExternalApi">
+        SELECT * FROM DW_OPEN_API_RELATION WHERE API_ID=#{apiId}
+    </select>
+    <select id="getApiRelationsByApiIds" parameterType="java.util.List" resultMap="HttpExternalApi">
+        SELECT * FROM DW_OPEN_API_RELATION
+        WHERE API_ID in
+        <foreach collection="dataAssetApiIds" item="dataAssetApiId" index="index" open="(" close=")" separator=",">
+            #{dataAssetApiId}
+        </foreach>
+    </select>
+</mapper>

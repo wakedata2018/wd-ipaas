@@ -1,0 +1,105 @@
+
+spring:
+  application:
+    name: dw-open
+  mvc:
+    backend:
+      prefix: /dw/open
+      api:
+        prefix: /api
+        max-page-size: 2000
+      indi:
+        prefix: /dw/indi
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2097152
+      file-size-threshold: 0
+      max-request-size: 2097152
+      location: /data/wakedata/upload_temp
+  profiles:
+    active: wdtest
+  datasource:
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  cache:
+    cache-names: caffeine
+    caffeine:
+      spec: initialCapacity=50,maximumSize=500,expireAfterAccess=10s
+  liquibase:
+    change-log:
+  mail:
+    host: smtp.mxhichina.com
+    username: warning@wakedata.com
+    password: wd-123456
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+            required: false
+
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml,classpath*:mapper/lowcode/*.xml
+  type-aliases-package: com.wakedata.dw.open.model.domain
+  typeHandlersPackage: com.wakedata.dw.open.enums
+
+mapper:
+  mappers:
+    - tk.mybatis.mapper.common.Mapper
+    - tk.mybatis.mapper.common.special.InsertListMapper
+    - tk.mybatis.mapper.additional.idlist.IdListMapper
+  notEmpty: true
+server:
+  servlet:
+    session:
+      timeout: 60m
+    context-path: /dw/open
+  port: 8080
+
+dw:
+  auth:
+    client:
+      domain: cloud.wakedata.com
+      excludedPages: /dw/logout,/*.html,/*.js,/*.css,/favicon.ico,/resources/**,/base/**,/css/**,/images/**,/
+      host:
+        url: http://cloud.wakedata.com
+      logoutUrl: /dw/logout
+    enable: true
+    server:
+      host:
+        url: http://129.204.231.247:8089
+      loginUrl: /#/login
+      logoutUrl: /logout
+      perm:
+        service:
+          url: http://129.204.231.247:8089/AuthService
+
+  wakedata:
+    auth2:
+      url:
+        un-authentication: /dw/open/api/**,/swagger-resources/**,/webjars/**,/v2/**,/swagger-ui.html/**,/resources/**,/null/**,/dw/open/low/code/**
+      client:
+        id: cloud
+        secret: fbe39be1c696c01dd33804ab240583
+        redirect_url: http://localhost:8081
+    host: http://permission.wakedata.com
+    internal-host: http://permission.wakedata.com
+    permission:
+      url:
+        un-authentication: /dw/open/api/**,/swagger-resources/**,/webjars/**,/v2/**,/swagger-ui.html/**,/resources/**,/null/**,/dw/platform/**,/dw/open/low/code/**

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.connector.ConnectorEnvironmentAddressMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.connector.ConnectorEnvironmentAddressPo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="connector_id" property="connectorId"/>
+        <result column="address_name" property="addressName"/>
+        <result column="environment_address" property="environmentAddress"/>
+    </resultMap>
+    <select id="checkEnvironmentAddressName" resultMap="BaseResultMap">
+        SELECT e.id, e.connector_id, e.address_name, e.environment_address, e.lessee_id
+        FROM dw_open_connector_environment_address e
+        WHERE e.address_name IN
+        <foreach collection="environmentAddressPoList" item="environmentAddressPo" index="index" open="(" close=")" separator=",">
+            #{environmentAddressPo.addressName}
+        </foreach>
+        <if test="connectorId != null">
+            AND e.connector_Id = #{connectorId}
+        </if>
+    </select>
+
+    <select id="selectByConnectorId" resultMap="BaseResultMap">
+        select id,lessee_id,connector_id,address_name,environment_address
+        from dw_open_connector_environment_address
+        where connector_id = #{connectorId}
+    </select>
+
+</mapper>

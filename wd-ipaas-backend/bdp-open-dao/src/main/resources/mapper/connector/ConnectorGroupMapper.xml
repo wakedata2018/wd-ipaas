@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.connector.ConnectorGroupMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.connector.ConnectorGroupPo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="group_name" property="groupName"/>
+        <result column="description" property="description"/>
+        <result column="sort_field" property="sortField"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <resultMap id="ConnectorWithChildren" type="com.wakedata.dw.open.model.connector.ConnectorGroupPo" extends="BaseResultMap">
+        <collection property="children" ofType="com.wakedata.dw.open.model.connector.ConnectorGroupPo"
+        select="com.wakedata.dw.open.mapper.connector.ConnectorGroupMapper.getAllConnectorWithChildrenByParentId" column="id"/>
+    </resultMap>
+
+    <sql id="column">
+        `id`,
+        `lessee_Id`,
+        `parent_id`,
+        `group_name`,
+        `description`,
+        `sort_field`,
+        `create_by`,
+        `create_time`,
+        `update_by`,
+        `update_time`
+    </sql>
+
+    <select id="getAllConnectorWithChildrenByParentId" resultMap="ConnectorWithChildren">
+        select
+        <include refid="column"/>
+        from dw_open_connector_group
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="queryParentIdMax" resultType="java.lang.Integer">
+        SELECT MAX(sort_field)
+        FROM dw_open_connector_group c
+        where c.parent_id = #{parentId}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.auth.AuthInfoApiMapper">
+
+    <update id="updateByApiIdAndAuthId">
+        UPDATE DW_AUTH_COLLECT SET UPDATE_TIME = #{updateTime}
+        WHERE DW_AUTH_INFO_ID = #{authInfoId} AND DW_OPEN_API_ID = #{apiId}
+    </update>
+
+
+    <select id="checkByApiIdAndAuthId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM DW_AUTH_COLLECT
+        WHERE DW_OPEN_API_ID = #{apiId} AND DW_AUTH_INFO_ID = #{authId}
+    </select>
+</mapper>

@@ -1,0 +1,63 @@
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 3000!important;
+  overflow: hidden;
+  list-style: none;
+
+  margin: 0;
+  padding: 2px;
+
+  -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,.2);
+  -moz-box-shadow: 0px 0px 10px rgba(0,0,0,.2);
+  box-shadow: 0px 0px 10px rgba(0,0,0,.2);
+  border-radius: 0px;
+  border: 1px solid white;
+
+  background: white;
+  font-size: 90%;
+  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+
+  max-height: 20em;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    background-color: 'transparent';
+  }
+  /*定义滚动条轨道 内阴影+圆角*/
+  &::-webkit-scrollbar-track {
+    background-color: 'transparent';
+  }
+
+  /*定义滑块 内阴影+圆角*/
+  &::-webkit-scrollbar-thumb {
+    background-color: #cacdd4;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: darken(#cacdd4,20%);
+  }
+}
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 0px;
+  white-space: pre;
+  color: #606266;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover{
+    background: #dbecff;
+    color: rgb(21, 142, 255);
+  }
+}
+
+li.CodeMirror-hint-active {
+  background: rgb(21, 142, 255);
+  color: white;
+  &:hover{
+    background: rgb(72, 167, 255);
+    color: white;
+  }
+}

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.connector.ConnectorMapper">
+    <resultMap id="BaseResultMap" type="com.wakedata.dw.open.model.connector.ConnectorPo">
+        <id column="id" property="id"/>
+        <result column="lessee_id" property="lesseeId"/>
+        <result column="group_id" property="groupId"/>
+        <result column="auth_type" property="authType"/>
+        <result column="enable_status" property="enableStatus"/>
+        <result column="name" property="name"/>
+        <result column="version" property="version"/>
+        <result column="developer" property="developer"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="website" property="website"/>
+        <result column="help_document" property="helpDocument"/>
+        <result column="privacy_agreement" property="privacyAgreement"/>
+        <result column="usage_agreement" property="usageAgreement"/>
+        <result column="platform_introduction" property="platformIntroduction"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+    <sql id = "allColumn">
+        id,
+        `lessee_id`,
+        `group_id` as groupId,
+        `auth_type` as authType,
+        `enable_status` as enableStatus,
+        `name`,
+        `version`,
+        `developer`,
+        `phone`,
+        `email`,
+        `website`,
+        `help_document` as helpDocument,
+        `privacy_agreement` as privacyAgreement,
+        `usage_agreement` as usageAgreement,
+        `platform_introduction` as platformIntroduction,
+        `is_delete` as isDelete,
+        `create_by` as createBy,
+        `create_time` as createTime,
+        `update_by` as updateBy,
+        `update_time` as updateTime
+    </sql>
+    <select id="pageQueryConnector" resultType="com.wakedata.dw.open.model.connector.ConnectorPo">
+        select <include refid="allColumn"/>
+        from dw_open_connector c
+        <where>
+         c.is_delete = 0
+        <if test="query.id != null">
+            AND c.id = #{query.id}
+        </if>
+        <if test="query.groupId != null">
+            AND c.group_id = #{query.groupId}
+        </if>
+        <if test="query.authType != null">
+            AND c.auth_type = #{query.authType}
+        </if>
+        <if test="query.enableStatus != null">
+            AND c.enable_status = #{query.enableStatus}
+        </if>
+        <if test="query.name != null">
+            AND c.name like concat('%',#{query.name},'%')
+        </if>
+        order by c.update_time DESC
+        </where>
+    </select>
+
+
+</mapper>

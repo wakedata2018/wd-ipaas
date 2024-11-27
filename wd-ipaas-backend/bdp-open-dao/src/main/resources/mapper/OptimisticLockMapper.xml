@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wakedata.dw.open.mapper.OptimisticLockMapper">
+
+    <update id="getLock">
+        UPDATE DW_OPEN_OPTIMISTIC_LOCK
+        SET IP=#{ip} ,VERSION_NO=VERSION_NO +1 ,UPDATE_TIME=NOW(),LOCK_STATUS=1
+        WHERE ID=#{id} AND VERSION_NO=#{versionNo} AND LOCK_STATUS=0
+    </update>
+
+    <update id="releaseLock">
+        UPDATE DW_OPEN_OPTIMISTIC_LOCK
+        SET IP='' ,VERSION_NO=VERSION_NO +1 ,UPDATE_TIME=NOW(),LOCK_STATUS=0
+        WHERE ID=#{id} AND VERSION_NO=#{versionNo} and IP=#{ip} AND LOCK_STATUS=1
+    </update>
+
+    <update id="releaseDeadLock">
+        UPDATE DW_OPEN_OPTIMISTIC_LOCK
+        SET IP='' ,VERSION_NO=VERSION_NO +1 ,UPDATE_TIME=NOW(),LOCK_STATUS=0
+        WHERE ID=#{id} AND VERSION_NO=#{versionNo}
+    </update>
+
+    <update id="incrementAccessTimes">
+        UPDATE DW_OPEN_OPTIMISTIC_LOCK
+        SET VERSION_NO=VERSION_NO +1 WHERE ID=3
+    </update>
+
+
+</mapper>
