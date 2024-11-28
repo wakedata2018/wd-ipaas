@@ -1,6 +1,18 @@
 
 # ✨ 快速开始
 
+## 组件说明
+
+| 名称   | 版本 | 描述  |
+| --- | --- | --- | 
+| MySQL |  8.0.x |  数据库存储 |
+| Redis | 4.0+ | 缓存 |
+| Nacos | 2.3.x | 配置中心与注册中心 |
+| wd_permission | N/A | 权限服务 |
+| wd_ipaas | N/A | 集成云服务|
+
+
+
 ## 数据库初始化
 
 
@@ -39,6 +51,16 @@ SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FO
 
 ## 后端部署
 
+### 1、部署Nacos、MySQL、Redis中间件
+
+
+根据前面的版本，可自行部署，部署完成后将 nacos/nacos_config_export_xx.zip 配置导入nacos
+
+根据MySQL、Redis、域名自行修改相关配置
+
+
+### 2、打包& 部署服务
+
 ```
 cd wd-ipaas-backend
 
@@ -47,6 +69,8 @@ mvn clean package -DskipTests
 
 docker build -t wd-ipaas --file=bdp-open-web/src/main/docker/Dockerfile bdp-open-web
 
+
+# 执行 docker命令启动服务，记得命令中nacos地址、账密修改为你的nacos相关
 
 docker run -d --name wd-ipaas --restart unless-stopped -p 8082:8082 -e JAVA_OPTIONS='-server -verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -XX:+PrintCommandLineFlags -XX:+DisableExplicitGC -XX:+PrintPromotionFailure -XX:+HeapDumpOnOutOfMemoryError -XX:+UseG1GC -XX:SurvivorRatio=6 -XX:G1ReservePercent=12 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=30 -XX:MaxDirectMemorySize=512M -XX:G1HeapRegionSize=2M -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:ErrorFile=/tmp/hs_err_log.log -Xloggc:/tmp/gc.log -XX:ParallelGCThreads=2 -Duser.timezone='Asia/Shanghai' -Dserver.port=8082 -Xmx2G -Xms2G -Dspring.cloud.nacos.server-addr=127.0.0.1:8848 -Dspring.cloud.nacos.config.namespace=wdcloud -Dspring.cloud.nacos.discovery.namespace=wdcloud -Dspring.cloud.nacos.username=nacos -Dspring.cloud.nacos.password=nacospassword' wd-ipaas
 
