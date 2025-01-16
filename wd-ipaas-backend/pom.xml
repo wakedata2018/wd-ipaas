@@ -22,17 +22,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <swagger.version>2.7.0</swagger.version>
-        <dw-platform.version>3.0.0-SNAPSHOT</dw-platform.version>
+        <dw-platform.version>3.0.0</dw-platform.version>
         <shiro.version>1.4.0</shiro.version>
         <nacos.version>2.2.6.RELEASE</nacos.version>
         <jackson.version>2.11.1</jackson.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
         <log4j.version>2.16.0</log4j.version>
-        <permission.version>4.3.0-RC02-SNAPSHOT</permission.version>
-        <wd-app.version>4.4.0-RC02-SNAPSHOT</wd-app.version>
+        <permission.version>V5.0.1-S27-RC06</permission.version>
+        <wd-app.version>V5.0.1-S19-RC01</wd-app.version>
         <dom4j.version>2.1.3</dom4j.version>
-        <wd-common.version>1.2.3-DDD17</wd-common.version>
-        <xxl-job.version>2.2.0-WK</xxl-job.version>
+        <wd-common.version>1.2.3-DDD41</wd-common.version>
+        <xxl-job.version>2.2.0-WK-RC05</xxl-job.version>
         <hutool.version>5.5.7</hutool.version>
         <kafka-clients.version>2.3.1</kafka-clients.version>
     </properties>
@@ -227,7 +227,7 @@
                 <version>${permission.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>com.wakedata.common</groupId>
+                        <groupId>com.wakedata</groupId>
                         <artifactId>wd-common-redis</artifactId>
                     </exclusion>
                 </exclusions>
@@ -261,6 +261,7 @@
                 <artifactId>wd-common-mq</artifactId>
                 <version>${wd-common.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.wakedata.common</groupId>
                 <artifactId>wd-common-redis</artifactId>
@@ -294,6 +295,38 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <name>maven-central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>oracle-repo</id>
+            <url>https://maven.repository.redhat.com/ga/</url>
+        </repository>
+       <!-- <repository>
+        <id>dremio-releases</id>
+        <url>https://repo.databricks.com/dremio/releases</url>
+        </repository>-->
+    </repositories>
 
     <build>
         <defaultGoal>compile</defaultGoal>

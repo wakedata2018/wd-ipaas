@@ -1,6 +1,6 @@
 package com.wakedata.dw.helper;
 
-import cdjd.org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import cn.hutool.core.collection.CollectionUtil;
 import com.wakedata.dw.open.enums.MsgCodeEnum;
 import com.wakedata.dw.open.exception.OpenException;

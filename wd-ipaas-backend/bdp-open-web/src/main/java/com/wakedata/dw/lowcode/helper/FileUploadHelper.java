@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import cdjd.com.google.common.io.Files;
-import cdjd.org.apache.commons.lang3.StringUtils;
+import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
 import cn.hutool.core.io.FileUtil;
 import com.wakedata.common.core.dto.ResultDTO;
 import com.wakedata.common.core.util.BaseEnumUtil;

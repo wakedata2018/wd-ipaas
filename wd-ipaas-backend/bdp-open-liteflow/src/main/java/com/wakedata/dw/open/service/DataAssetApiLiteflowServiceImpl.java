@@ -1,6 +1,6 @@
 package com.wakedata.dw.open.service;
 
-import cdjd.com.google.common.collect.Lists;
+import com.google.common.collect.Lists;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSONObject;

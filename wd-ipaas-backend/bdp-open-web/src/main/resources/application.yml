@@ -16,9 +16,9 @@ spring:
     time-zone: GMT+8
   cache: redis
   redis:
-    host: ${redis.host}
-    password: ${redis.password}
-    port: ${redis.port}
+    host: 127.0.0.1
+    password:
+    port: 6379
   cloud:
     sentinel:
       log.dir: /data/log/wakedata/sentinel

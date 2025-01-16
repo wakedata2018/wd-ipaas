@@ -19,6 +19,14 @@
             <name>aliyun</name>
             <url>http://maven.aliyun.com/nexus/content/groups/public</url>
         </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -82,9 +90,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.wakedata.dw.platform</groupId>
             <artifactId>dw-web-spring-boot-starter</artifactId>
+            <version>3.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mapstruct</groupId>
@@ -95,8 +104,7 @@
                     <artifactId>dw-common-spring-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
-            <version>${dw-platform.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>io.springfox</groupId>
@@ -167,6 +175,17 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
       </dependency>
+
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.8.0</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+        </dependency>
 
     </dependencies>
     <build>
