@@ -132,7 +132,7 @@ demo地址：<a href="https://open-ipaas.wakedata.com">https://open-ipaas.wakeda
 对于企业级功能和专业技术支持，请联系售前专家进行个性化演示、定制方案和获取报价。
 
 - 网站: https://wakedata.com/wake-integrated.html
-- 电子邮件: x@wakedata.com
+- 电子邮件: marketing@wakedata.com
 - 企业微信
 ![image](./image/wechat.png)
 
