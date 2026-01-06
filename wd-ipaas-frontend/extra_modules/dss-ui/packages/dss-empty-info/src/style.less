@@ -1,0 +1,24 @@
+.empty-info {
+  display: flex;
+  flex-direction: column;
+  align-content: stretch;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  text-shadow: 1px 1px 1px white;
+  color: #c8ccd3;
+  vertical-align: top;
+  &>i {
+    font-size: 60px;
+  }
+
+  .error-text {
+    display: inline-block;
+    word-break:normal; 
+    word-wrap:break-word;
+    width: calc(100% - 20px);
+    // overflow: hidden;
+    padding: 10px;
+    font-size: 13px;
+  }
+}

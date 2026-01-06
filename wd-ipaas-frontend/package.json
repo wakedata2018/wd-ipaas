@@ -14,7 +14,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "update:wakeadmin": "pnpm up -L @wakeadmin/*",
-    "prepare": "husky install",
+    "prepare": "cd .. && husky install wd-ipaas-frontend/.husky",
     "local-check": "wkstd local-check"
   },
   "dependencies": {
@@ -32,8 +32,8 @@
     "cron-parser": "^4.6.0",
     "crypto-js": "^4.2.0",
     "default-passive-events": "^2.0.0",
-    "dss-common": "^1.1.9",
-    "dss-ui": "^0.3.26",
+    "dss-common": "./extra_modules/dss-common",
+    "dss-ui": "./extra_modules/dss-ui",
     "echarts": "^4.9.0",
     "echarts-gl": "^1.1.2",
     "echarts-liquidfill": "^2.0.6",

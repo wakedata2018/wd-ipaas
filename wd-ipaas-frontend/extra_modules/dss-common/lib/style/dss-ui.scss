@@ -1,0 +1,182 @@
+@import './dss-ui/dss-element.scss';
+@import './dss-ui/dss-var.scss';
+@import './dss-ui/dss-table.scss';
+@import './dss-ui/dss-pagination.scss';
+
+/* el-button 按钮样式
+-------------------*/
+.el-button--text {
+  color: $dss--link-color;
+}
+
+.dss-btn-circle.el-button--mini {
+  min-width: 100px;
+  min-height: 30px;
+  border-radius: 15px;
+  padding: 8px 15px;
+}
+
+/* 侧边菜单样式
+****************/
+.dss-side-menu  {
+  background: $dss--menu-fill;
+  display: inline-block;
+  float: left;
+  min-height: 100vh;
+
+  .el-menu {
+    background-color: $dss--menu-fill;
+    border-color: $dss--menu-fill;
+
+    .el-menu-item  {
+      color: $dss--color-white;
+
+      &.is-active {
+        background-color: $dss--menu-hove-fill;
+      }
+    }
+  }
+}
+
+.dss-button--default.el-button {
+  border-radius: 20px;
+  color: $dss--primary-color;
+  border-color: $dss--primary-color;
+  border-width: 2px;
+  font-size:16px;
+  padding: 6px 20px;
+}
+
+/* 卡片样式
+****************/
+.dss-card {
+  background:#fff;
+  border-radius:4px;
+}
+
+.dss-title {
+  color: $dss--title-color;
+  font-size:16px;
+  font-weight: 500;
+  padding: 28px 30px;
+}
+
+.dss-label {
+  color: $dss--label-color;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dss-sub-title {
+  color: #2C3641;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dss-division {
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: 2px dashed #d7e0ea;
+  margin: 0;
+}
+
+/* 分页组件样式
+*******************/
+.dss-pager.el-pagination {
+  .btn-next, .btn-prev {
+    .el-icon {
+      color: $dss--pager-color;
+    }
+  }
+
+  .el-pager {
+    li {
+      color: $dss--pager-color;
+      font-weight:400;
+    }
+
+    li.active {
+      background: $dss--primary-color;
+      color: $dss--color-white;
+      min-width: 28px;
+      border-radius: 50%;
+    }
+  }
+
+  .el-input {
+    input {
+      border-color: $dss--pager-input-border-color;
+      color: $dss--pager-color;
+    }
+  }
+
+  .el-pagination__jump, .el-pagination__total {
+    color: $dss--pager-color;
+  }
+}
+
+/* switch组件
+********************/
+.dss-switch {
+
+  &.is-checked .el-switch__core::after {
+    margin-left: -16px;
+  }
+
+  .el-switch__core {
+    width: 48px !important;
+    height: 18px;
+
+    &:after {
+      width: 18px;
+      height: 18px;
+      box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.09),0px -1px 1px 0px rgba(0,0,0,0.1);
+      top: -1px;
+      left: -2px;
+    }
+  }
+  .el-switch__label {
+    span {
+      position: absolute;
+      z-index: 2;
+      color: white;
+      top: 3px;
+      user-select: none;
+      opacity: 1.0;
+      transition: opacity 0.2s;
+    }
+  }
+
+  .el-switch__label--left {
+    span {
+      margin-left: 18px;
+      font-size: 12px;
+    }
+
+    &.is-active {
+      span {
+        opacity: 0;
+      }
+    }
+  }
+
+  .el-switch__label--right {
+    span {
+      margin-left: -36px;
+      color: rgba(168,176,192,1);
+    }
+
+    &.is-active {
+      span {
+        opacity: 0;
+      }
+    }
+  }
+}
+
+.dss-scroll-hidden-x {
+  .el-scrollbar__wrap {
+    overflow-x: hidden;
+  }
+}

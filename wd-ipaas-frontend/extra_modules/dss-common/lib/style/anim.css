@@ -1,0 +1,24 @@
+/**
+ * 这里是一些动画样式
+ */
+ @keyframes statusOn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all .2s ease
+}
+
+.fade-enter,
+.fade-leave-active {
+    opacity: 0;
+    transform: translate3d(0, -20px, 0)
+}
