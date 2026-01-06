@@ -1,0 +1,38 @@
+$dss--color-white: white;
+$dss--primary-color: #3879fb;
+$dss--success-color: #50daaa;
+$dss--danger-color: #fb4938;
+$dss--default-backgroud: #f2f4f7;
+$dss--color-56680: #566980;
+
+/* text文本颜色
+----------------*/
+$dss--text-primary-color: #333333;
+$dss--text-secondary-color: #999999;
+$dss--navigator-color: rgba(51, 56, 67, 1);
+$dss--link-color: #2e8dff;
+
+
+/* side menu背景颜色，高亮色
+****************/
+$dss--menu-fill: #2659c7;
+$dss--menu-hove-fill: #3867ca;
+
+/* table表格样式
+*************/
+// $dss--table-border-color: rgba(220,221,224,1);
+$dss--table-border-color: #ebeef5;
+$dss--table-td-color: $dss--text-primary-color;
+$dss--table-td-font-size: 12px;
+
+/* 标题字体颜色
+************/
+$dss--title-color: #222b4d;
+$dss--label-color: $dss--color-56680;
+$dss-sub-title-color: #2C3641;
+
+/* 分页组件颜色
+***********/
+$dss--pager-color: #a8b0c0;
+$dss--pager-input-border-color: #d7e0ea;
+$dss--pager-color: #566980;

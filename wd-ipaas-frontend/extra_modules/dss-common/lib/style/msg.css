@@ -1,0 +1,54 @@
+.dss-common-msg {
+  min-width: 380px;
+  box-sizing: border-box;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ebeef5;
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  background-color: #edf2fc;
+  transition: opacity .3s, transform .4s;
+  padding: 15px 15px 15px 20px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.dss-common-msg p {
+  margin: 0;
+}
+
+.dss-common-msg--error {
+  background-color: #fef0f0;
+  border-color: #fde2e2;
+}
+.dss-common-msg--warning {
+  background-color: #fdf6ec;
+  border-color: #faecd8;
+}
+
+.dss-common-msg__content {
+  font-size: 14px;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.dss-common-msg--error .dss-common-msg__content {
+  color: #f56c6c;
+}
+
+.dss-common-msg .el-icon-error {
+  color: #f56c6c;
+}
+
+.dss-common-msg--warning .dss-common-msg__content {
+  color: #e6a23c;
+}
+
+.dss-common-msg .el-icon-warning {
+  color: #e6a23c;
+}

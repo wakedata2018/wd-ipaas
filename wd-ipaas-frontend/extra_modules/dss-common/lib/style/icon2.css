@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'dssicon';
+  src:
+    url('../fonts/dssicon.ttf?7e6qi2') format('truetype'),
+    url('../fonts/dssicon.woff?7e6qi2') format('woff'),
+    url('../fonts/dssicon.svg?7e6qi2#dssicon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'dssicon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  font-size: 22px;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-feedback:before {
+  content: "\e900";
+}
+.icon-device:before {
+  content: "\e903";
+}
+.icon-company:before {
+  content: "\e904";
+}
+.icon-content:before {
+  content: "\e905";
+}
+.icon-store:before {
+  content: "\e906";
+}
+.icon-reward- .path1:before {
+  content: "\e907";
+  color: rgb(0, 0, 0);
+  opacity: 0.7;
+}
+.icon-reward- .path2:before {
+  content: "\e908";
+  margin-left: -1em;
+  color: rgb(0, 0, 0);
+}
+.icon-reward- .path3:before {
+  content: "\e909";
+  margin-left: -1em;
+  color: rgb(0, 0, 0);
+}
+.icon-user:before {
+  content: "\e90a";
+}
+.icon-member:before {
+  content: "\e90b";
+}
+.icon-analysis:before {
+  content: "\e90c";
+}
+.icon-setting:before {
+  content: "\e901";
+}

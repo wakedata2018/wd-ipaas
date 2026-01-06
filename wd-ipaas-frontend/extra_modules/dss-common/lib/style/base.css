@@ -1,0 +1,16 @@
+/**
+ * 这里通用样式
+ */
+ body {
+   font-size: 14px;
+   font-family: "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Tahoma, Arial, SimSun, Heiti, sans-serif;
+   margin: 0px;
+   background-color: #f1f4f7
+ }
+ input, textarea, keygen, select, button {
+   font-family: "Hiragino Sans GB", "Microsoft YaHei", Helvetica, Tahoma, Arial, SimSun, Heiti, sans-serif;
+ }
+ a {
+   text-decoration: none;
+   cursor: pointer
+ }

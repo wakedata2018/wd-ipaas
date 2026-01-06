@@ -1,0 +1,109 @@
+/**
+ * 这里针对element-ui样式的一些定制化
+ */
+.el-submenu .el-menu-item {
+  padding-left: 52px !important;
+}
+.el-pagination {
+  padding: 0;
+  text-align: right;
+  margin-top: 20px;
+}
+.el-table {
+  margin-top: 20px;
+}
+.el-table thead th,
+.el-table thead.is-group th {
+  background: #fafafa;
+  color: #666
+}
+.el-card__header {
+  padding: 30px 30px 0 30px;
+  border-bottom: none;
+  position: relative;
+}
+.el-card__body {
+  padding: 30px;
+}
+.el-card.is-always-shadow,
+.el-card.is-hover-shadow:focus,
+.el-card.is-hover-shadow:hover {
+  -webkit-box-shadow: 0 2px 6px 0 rgba(20,113,206,0.14);
+  box-shadow: 0 2px 6px 0 rgba(20,113,206,0.14);
+}
+.el-submenu__title i,
+.el-menu-item i {
+  color: #74849a;
+  margin-right: 8px;
+}
+.el-menu-item:hover [class*="icon-"]{
+  color: #fff
+}
+.el-submenu.is-active [class*="icon-"]{
+  color: #fff
+}
+.el-aside {
+  border-right: none;
+  background-color: #36455E;
+}
+.el-menu,
+.el-menu--inline {
+  border-right: none;
+  background-color: #36455E;
+}
+
+.el-menu-item,
+.el-submenu__title {
+  color: #74849A;
+  line-height: 50px!important;
+  height: 50px!important;
+}
+.el-submenu__icon-arrow {
+  color: #74849A;
+}
+
+.el-menu-item.is-active,
+.el-menu-item:focus,
+.el-menu-item:hover,
+.el-submenu__title:hover {
+  background-color: #1A2840;
+  box-shadow: inset 3px 0 0 #3499fe;
+  color: white;
+}
+
+.el-menu-item {
+  position: relative;
+}
+
+.el-menu-item.is-active:before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-right-color: #f3f4f7;
+  right: 0;
+  top: 50%;
+  margin-top: -7px;
+}
+
+.el-submenu.is-opened {
+  box-shadow: none;
+}
+
+.el-submenu.is-opened .el-submenu__title {
+  color: white;
+}
+.el-aside .el-loading-mask {
+  background-color: transparent
+}
+
+.el-tooltip__popper.red {
+  background: #FB6042;
+  margin-top: -10px;
+}
+.el-tooltip__popper.red .popper__arrow,
+.el-tooltip__popper.red .popper__arrow::after {
+  border-top-color: #FB6042;
+}
