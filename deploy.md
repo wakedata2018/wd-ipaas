@@ -78,7 +78,9 @@ docker run -d --name wd-ipaas --restart unless-stopped -p 8082:8082 -e JAVA_OPTI
 docker run -d --name WD-PERMISSION-OP-20241126 --restart unless-stopped -p 8083:8083 -e JAVA_OPTIONS='-server -verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+PrintGCDetails -XX:+PrintTenuringDistribution -XX:+PrintCommandLineFlags -XX:+DisableExplicitGC -XX:+PrintPromotionFailure -XX:+HeapDumpOnOutOfMemoryError -XX:+UseG1GC -XX:SurvivorRatio=6 -XX:G1ReservePercent=12 -XX:MaxGCPauseMillis=200 -XX:InitiatingHeapOccupancyPercent=30 -XX:MaxDirectMemorySize=512M -XX:G1HeapRegionSize=2M -XX:HeapDumpPath=/tmp/heapdump.hprof -XX:ErrorFile=/tmp/hs_err_log.log -Xloggc:/tmp/gc.log -XX:ParallelGCThreads=2 -Duser.timezone='Asia/Shanghai' -Dserver.port=8083 -Xmx2G -Xms2G -Dspring.cloud.nacos.server-addr=192.168.0.110:8848 -Dspring.cloud.nacos.config.namespace=wdcloud -Dspring.cloud.nacos.discovery.namespace=wdcloud -Dspring.cloud.nacos.config.username=nacos -Dspring.cloud.nacos.config.password=hsauf#H514 -Dspring.cloud.nacos.discovery.username=nacos -Dspring.cloud.nacos.discovery.password=hsauf#H514' crpi-ldamce7tccsu91ry.cn-shenzhen.personal.cr.aliyuncs.com/wakedata_public/wakedata:WD-PERMISSION-OP-20241126
 ```
 
-
+#Permission 的镜像地址有两个都可以用
+registry.cn-hangzhou.aliyuncs.com/libriary/wakedata:WD-PERMISSION-OP-20241126
+crpi-ldamce7tccsu91ry.cn-shenzhen.personal.cr.aliyuncs.com/wakedata_public/wakedata:WD-PERMISSION-OP-20241126
 
 ## 前端部署
 
