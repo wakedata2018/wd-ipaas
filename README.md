@@ -134,7 +134,7 @@ demo地址：<a href="https://open-ipaas.wakedata.com">https://open-ipaas.wakeda
 - 网站: https://wakedata.com/wake-integrated.html
 - 电子邮件: marketing@wakedata.com
 - 企业微信
-![image](./image/wechat.png)
+![image](./image/wechat_dlz.png)
 
 
 <br>
